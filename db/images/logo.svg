@@ -1,0 +1,22 @@
+<svg width="260" height="100" viewBox="0 0 260 100" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Light green background -->
+  <rect x="0" y="0" width="220" height="100" fill="#9ed39e"></rect>
+
+  <!-- Diagonal cut -->
+  <polygon points="180,0 260,0 240,100 160,100" fill="#0b3d2e"></polygon>
+
+  <!-- Text -->
+  <text x="15" y="35" font-family="Georgia, serif" font-size="16" fill="#0b3d2e">
+    The
+  </text>
+
+  <text x="15" y="60" font-family="Georgia, serif" font-size="22" font-weight="bold" fill="#0b3d2e">
+    Pragmatic
+  </text>
+
+  <text x="15" y="82" font-family="Georgia, serif" font-size="18" fill="#0b3d2e">
+    Bookshelf
+  </text>
+
+</svg>

@@ -3,6 +3,26 @@ require "test_helper"
 class ProductsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @product = products(:one)
+    @title = "The Great Book #{rand(1000)}"
+    login_as users(:one)
+  end
+
+  def create
+    @product = Product.new(product_params)
+      respond_to do |format|
+        if @product.save
+          format.html { redirect_to @product,
+            notice: "Product was successfully created." }
+          format.json { render :show, status: :created,
+            location: @product }
+        else
+          puts @product.errors.full_messages
+          format.html { render :new,
+            status: :unprocessable_entity }
+          format.json { render json: @product.errors,
+            status: :unprocessable_entity }
+      end
+    end
   end
 
   test "should get index" do
@@ -39,10 +59,10 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should destroy product" do
-    assert_difference("Product.count", -1) do
-      delete product_url(@product)
-    end
+    assert_raises ActiveRecord::RecordNotDestroyed do
+      delete product_url(products(:two))
+    end 
 
-    assert_redirected_to products_url
+    assert Product.exists?(products(:two).id)
   end
 end

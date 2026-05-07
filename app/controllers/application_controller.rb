@@ -1,9 +1,22 @@
 class ApplicationController < ActionController::Base
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
+  before_action :set_i18n_locale_from_params
+  # ...
+  include Authentication
+  # Only allow modern browsers supporting webp images, web push, badges,
+  # import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
-  # Changes to the importmap will invalidate the etag for HTML responses
-  stale_when_importmap_changes
-
   include ActiveStorage::SetCurrent
+
+    def set_i18n_locale_from_params
+      if params[:locale]
+        if I18n.available_locales.map(&:to_s).include?(params[:locale])
+          I18n.locale = params[:locale]
+        else
+          flash.now[:notice] =
+            "#{params[:locale]} translation not available"
+          logger.error flash.now[:notice]
+        end
+      end
+    end
 end

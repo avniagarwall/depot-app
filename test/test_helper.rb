@@ -1,6 +1,7 @@
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
+require_relative "test_helpers/session_test_helper"
 
 module ActiveSupport
   class TestCase
@@ -11,5 +12,14 @@ module ActiveSupport
     fixtures :all
 
     # Add more helper methods to be used by all tests here...
+
+    def login_as(user)
+      get users_path
+      post session_path, params: {
+        email_address: user.email_address,
+        password: "password"
+      }
+    end
+
   end
 end

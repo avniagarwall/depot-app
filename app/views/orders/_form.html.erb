@@ -1,0 +1,57 @@
+<%= form_with(model: order, class: "contents",
+  url: orders_path(locale: I18n.locale)) do |form| %>
+
+  <% if order.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2
+      font-medium rounded-md mt-3">
+      <h2><%=raw t('errors.template.header', count: @order.errors.count,
+        model: t('activerecord.models.order')) %>.</h2>
+      <p><%= t('errors.template.body') %></p>
+
+      <ul class="list-disc ml-6">
+        <% order.errors.each do |error| %>
+          <li><%=raw error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+<!-- ... -->
+
+  <div class="my-5">
+    <%= form.label :name, t('.name') %>
+    <%= form.text_field :name, class: "input-field" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :address, t('.address_html') %>
+    <%= form.textarea :address, rows: 4, class: "input-field" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :email, t('.email') %>
+    <%= form.email_field :email, class: "input-field" %>
+  </div>
+
+  <div data-controller="payment">
+    <div class="my-5">
+      <%= form.label :pay_type, t(".pay_type") %>
+      <%= form.select :pay_type,
+        Order.pay_types.keys.map {|key| [t(".pay_types.#{key}"), key] },
+                      { prompt: t('.pay_prompt_html') },
+                      'data-payment-target' => 'selection',
+                      'data-action' => 'payment#showAdditionalFields',
+                      class: "input-field" %>
+    </div>
+
+    <%= render partial: 'check', locals: {form: form} %>
+    <%= render partial: 'cc', locals: {form: form} %>
+    <%= render partial: 'po', locals: {form: form} %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit t('.submit'),
+      class: "w-full sm:w-autorounded-md
+        px-3.5 py-2.5 bg-green-200 hover:bg-blue-500 text-black
+        inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>
