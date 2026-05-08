@@ -7,7 +7,18 @@
 # Visit https://pragprog.com/titles/rails8 for more book information.
 #---
 # encoding: utf-8
+
+# ── Clean up ────────────────────────────────────────────────────────────────
+Review.delete_all
 Product.delete_all
+Category.delete_all
+
+# ── Categories ──────────────────────────────────────────────────────────────
+programming = Category.find_or_create_by!(name: "Programming")
+web_dev     = Category.find_or_create_by!(name: "Web Development")
+performance = Category.find_or_create_by!(name: "Performance")
+
+# ── Products ─────────────────────────────────────────────────────────────────
 product = Product.create(title: 'Programming Ruby 3.3 (5th Edition)',
   description:
     %(<p>
@@ -28,12 +39,29 @@ product.image.attach(io: File.open(
     filename: 'ruby5.jpg')
 
 product.save!
+
+product.categories << programming
+
+Review.create!(
+  product: product,
+  reviewer_name: "Alice Johnson",
+  rating: 5,
+  body: "The definitive Ruby reference. Every Ruby developer should own this book."
+)
+
+Review.create!(
+  product: product,
+  reviewer_name: "Bob Smith",
+  rating: 4,
+  body: "Great coverage of Ruby 3.3 features. Pattern matching section is excellent."
+)
+
 # . . .
 product = Product.create(title: 'Rails Scales!',
   description:
     %(<p>
       <em>Practical Techniques for Performance and Growth</em>
-      Rails doesn’t scale. So say the naysayers. They’re wrong. Ruby on Rails
+      Rails doesn't scale. So say the naysayers. They're wrong. Ruby on Rails
       runs some of the biggest sites in the world, impacting the lives of
       millions of users while efficiently crunching petabytes of data. This
       book reveals how they do it, and how you can apply the same techniques
@@ -45,20 +73,29 @@ product = Product.create(title: 'Rails Scales!',
     </p>),
   price: 30.95)
 
-  product.image.attach(io: File.open(
-    Rails.root.join('db', 'images', 'cprpo.jpg')),
-      filename: 'cprpo.jpg')
+product.image.attach(io: File.open(
+  Rails.root.join('db', 'images', 'cprpo.jpg')),
+    filename: 'cprpo.jpg')
 
-  product.save!
+product.save!
+
+product.categories << performance
+
+Review.create!(
+  product: product,
+  reviewer_name: "Carol Davis",
+  rating: 5,
+  body: "Finally a book that proves Rails can handle serious scale. Highly recommended."
+)
+
 # . . .
-
 product = Product.create(title: 'Modern Front-End Development for Rails, Second Edition',
   description:
     %(<p>
       <em>Hotwire, Stimulus, Turbo, and React</em>
       Improve the user experience for your Rails app with rich, engaging
       client-side interactions. Learn to use the Rails 7 tools and simplify the
-      complex JavaScript ecosystem. It’s easier than ever to build user
+      complex JavaScript ecosystem. It's easier than ever to build user
       interactions with Hotwire, Turbo, and Stimulus. You can add great
       front-end flair without much extra complication. Use React to build a
       more complex set of client-side features. Structure your code for
@@ -72,3 +109,14 @@ product.image.attach(io: File.open(
     filename: 'nrclient2.jpg')
 
 product.save!
+
+product.categories << web_dev
+
+Review.create!(
+  product: product,
+  reviewer_name: "Dan Lee",
+  rating: 4,
+  body: "Hotwire and Turbo sections are superb. React chapter could be deeper."
+)
+
+puts "✅ Seeded #{Product.count} products, #{Category.count} categories, #{Review.count} reviews"

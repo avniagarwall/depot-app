@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_07_185654) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_08_005618) do
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "message_checksum", null: false
@@ -58,9 +58,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_07_185654) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "book_orders", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "books", force: :cascade do |t|
+    t.string "author"
+    t.datetime "created_at", null: false
+    t.string "title"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "carts", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "categories_products", id: false, force: :cascade do |t|
+    t.integer "category_id", null: false
+    t.integer "product_id", null: false
   end
 
   create_table "line_items", force: :cascade do |t|
@@ -87,9 +110,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_07_185654) do
   create_table "products", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
+    t.decimal "discount", precision: 5, scale: 2
     t.decimal "price", precision: 8, scale: 2
+    t.integer "stock_quantity", default: 0
     t.string "title"
     t.datetime "updated_at", null: false
+    t.index ["title"], name: "index_products_on_title", unique: true
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.integer "product_id", null: false
+    t.integer "rating"
+    t.string "reviewer_name"
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_reviews_on_product_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -125,6 +161,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_07_185654) do
   add_foreign_key "line_items", "carts"
   add_foreign_key "line_items", "orders"
   add_foreign_key "line_items", "products"
+  add_foreign_key "reviews", "products"
+  add_foreign_key "reviews", "products"
   add_foreign_key "sessions", "users"
   add_foreign_key "support_requests", "orders"
 end
