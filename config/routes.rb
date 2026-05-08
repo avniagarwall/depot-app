@@ -4,6 +4,10 @@ Rails.application.routes.draw do
 
   resources :support_requests, only: %i[ index update ]
 
+  resources :products do
+    resources :reviews, only: [:index, :new, :create, :show, :destroy]
+  end
+
   resources :users
   resources :products
   resource :session
