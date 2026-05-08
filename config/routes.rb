@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "contacts/new"
+  get "contacts/create"
   get "admin" => "admin#index"
   get "up" => "rails/health#show", as: :rails_health_check
 
@@ -12,6 +14,7 @@ Rails.application.routes.draw do
   resources :products
   resource :session
   resources :passwords, param: :token
+  resources :contacts, only: [:new, :create]
 
   scope "(:locale)" do
     resources :orders
