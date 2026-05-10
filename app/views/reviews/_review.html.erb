@@ -1,0 +1,20 @@
+<%# locals: (review:, highlight: false) -%>
+
+<li class="review-card <%= highlight ? 'review-card--highlighted' : '' %>">
+  <div class="review-header">
+    <span class="review-tag review-tag--<%= review[:category] %>">
+      <%= review[:category]&.upcase %>
+    </span>
+    <h3 class="review-title"><%= review[:title] %></h3>
+  </div>
+
+  <p class="review-body"><%= review[:description] %></p>
+
+  <% if review[:code].present? %>
+    <pre class="review-code"><code><%= review[:code] %></code></pre>
+  <% end %>
+
+  <div class="review-footer">
+    <span class="review-section"> Reviews: <%= review[:section] %></span>
+  </div>
+</li>

@@ -1,0 +1,122 @@
+/* ── wrapper ── */
+.reviews-wrapper {
+  max-width: 860px;
+  margin: 2rem auto;
+  padding: 0 1.5rem 4rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.reviews-heading {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #cc342d;
+  margin-bottom: 0.25rem;
+}
+
+.reviews-subhead {
+  color: #666;
+  margin-bottom: 2.5rem;
+  font-size: 1rem;
+}
+
+/* ── group ── */
+.review-group {
+  margin-bottom: 2.5rem;
+}
+
+.group-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #333;
+  border-left: 4px solid #cc342d;
+  padding-left: 0.75rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── card ── */
+ul, .review-card { list-style: none; padding: 0; }
+
+.review-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 0.85rem;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.review-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  border-color: #cc342d;
+}
+.review-card--highlighted {
+  border-color: #e2a72e;
+  background: #fffbf0;
+}
+
+/* ── card header ── */
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.review-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+/* ── tags ── */
+.review-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.review-tag--template { background: #dbeafe; color: #1d4ed8; }
+.review-tag--partial  { background: #dcfce7; color: #15803d; }
+.review-tag--layout   { background: #fce7f3; color: #be185d; }
+.review-tag--advanced { background: #f3e8ff; color: #7e22ce; }
+.review-tag--helper   { background: #ffedd5; color: #c2410c; }
+
+/* ── body ── */
+.review-body {
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-bottom: 0.65rem;
+  line-height: 1.6;
+}
+
+/* ── code ── */
+.review-code {
+  background: #0d1117;
+  color: #e6edf3;
+  border-radius: 7px;
+  padding: 0.85rem 1rem;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  margin-bottom: 0.65rem;
+  border: 1px solid #30363d;
+}
+
+/* ── footer ── */
+.review-footer {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* ── spacer ── */
+.review-ruler { list-style: none; }
+.ruler-line {
+  border: none;
+  border-top: 2px dashed #f3e8ff;
+  margin: 0.25rem 0 0.85rem;
+}
