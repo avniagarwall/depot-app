@@ -1,0 +1,61 @@
+<div class="max-w-2xl mx-auto mt-8 px-4">
+
+  <%= link_to "← Back to Store",
+      store_index_path,
+      class: "text-sm text-gray-500 hover:underline" %>
+
+  <div class="flex gap-6 mt-6">
+    <%= image_tag @product.image,
+        class: "object-contain w-48 h-60 shadow rounded" %>
+
+    <div class="flex-1">
+      <h1 class="text-2xl font-bold text-gray-800 mb-2">
+        <%= @product.title %>
+      </h1>
+
+      <p class="text-gray-600 text-sm mb-4">
+        <%= sanitize(@product.description) %>
+      </p>
+
+      <p class="text-lg font-semibold mb-4">
+        <%= number_to_currency(@product.price) %>
+      </p>
+
+      <%= button_to t("store.index.add_html"),
+          line_items_path(product_id: @product),
+          form_class: "inline",
+          class: "rounded-lg py-1 px-3 text-white bg-green-600" %>
+    </div>
+  </div>
+
+  <%# ── Reviews — only here, never on index ── %>
+  <div class="mt-8 border-t border-gray-200 pt-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-gray-700">
+        Customer Reviews
+        <span class="text-gray-400 font-normal text-sm">
+          (<%= @product.reviews.count %>)
+        </span>
+      </h2>
+
+      <%= link_to "✍️ Write a Review",
+          new_product_review_path(@product),
+          class: "px-4 py-2 text-sm bg-amber-100 text-amber-800
+                  border border-amber-300 rounded
+                  hover:bg-amber-200 transition" %>
+    </div>
+
+    <% if @product.reviews.any? %>
+      <ul>
+        <%= render partial: "reviews/review",
+                   collection: @product.reviews,
+                   as: :review %>
+      </ul>
+    <% else %>
+      <p class="text-sm text-gray-400 italic">
+        No reviews yet — be the first!
+      </p>
+    <% end %>
+  </div>
+
+</div>
