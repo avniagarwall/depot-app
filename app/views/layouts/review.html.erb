@@ -1,0 +1,36 @@
+<%# Nested Layouts %>
+<% content_for :head do %>
+  <style>
+    .reviews-sidebar { width:220px; flex-shrink:0; background:#f9fafb;
+      border-right:1px solid #e5e7eb; padding:1.5rem 1rem; font-size:0.85rem; color:#6b7280; }
+    .reviews-sidebar h3 { font-weight:700; color:#374151; margin-bottom:0.75rem;
+      font-size:0.95rem; text-transform:uppercase; letter-spacing:0.05em; }
+    .reviews-sidebar ul { list-style:none; padding:0; margin:0; }
+    .reviews-sidebar li { padding:0.3rem 0; border-bottom:1px solid #f3f4f6; }
+    .reviews-main { flex:1; padding:0 1.5rem; }
+  </style>
+<% end %>
+
+<% content_for :content do %>
+  <div class="reviews-sidebar">
+    <h3>Reviews</h3>
+    <ul>
+      <li>⭐ All Reviews</li>
+      <li>🆕 Most Recent</li>
+      <li>👍 Top Rated</li>
+    </ul>
+    <% if @product %>
+      <hr style="margin:1rem 0;">
+      <h3>This Book</h3>
+      <p style="font-size:0.8rem; color:#9ca3af;">
+        <%= @product.reviews.count %> review(s) for<br>
+        <strong style="color:#374151;"><%= @product.title %></strong>
+      </p>
+    <% end %>
+  </div>
+  <div class="reviews-main">
+    <%= yield %>
+  </div>
+<% end %>
+
+<%= render template: "layouts/application" %>
