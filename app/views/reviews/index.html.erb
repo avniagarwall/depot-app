@@ -1,198 +1,30 @@
-<div class="reviews-wrapper">
+<% content_for :title, "Reviews for #{@product.title}" %>
 
-  <%# ─── 1. Basic partial render with locals (Section 4.3) ─── %>
-  <section class="review-group">
-    <h2 class="group-title">Templates (ERB, Jbuilder, Builder)</h2>
-    <%= render partial: "review",
-               locals: { review: {
-                 title: "ERB Templates",
-                 category: "template",
-                 section: "3.1",
-                 description: "Use <% %> for logic (loops, conditions) and <%= %> to output values. Comments go in <%# %>. Use <%- -%> to strip whitespace.",
-                 code: "<h1>Names</h1>\n<% @people.each do |person| %>\n  Name: <%= person.name %>\n<% end %>"
-               }, highlight: false } %>
+<div class="reviews-index">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    <h1 class="text-2xl font-bold text-gray-800">
+      Reviews <span class="text-base font-normal text-gray-400">for <%= @product.title %></span>
+    </h1>
+    <div>
+      <%= link_to "← Back to Product", store_show_path(@product),
+          class: "text-sm text-gray-500 hover:underline" %>
+      <%= link_to "✍️ Write a Review", new_product_review_path(@product),
+          class: "px-4 py-2 text-sm bg-amber-100 text-amber-800 border border-amber-300 rounded hover:bg-amber-200 transition ml-4" %>
+    </div>
+  </div>
 
-    <%= render partial: "review",
-               locals: { review: {
-                 title: "Jbuilder Templates (.json.jbuilder)",
-                 category: "template",
-                 section: "3.2",
-                 description: "Used for JSON responses. A json object is auto-available. Add gem 'jbuilder' to Gemfile.",
-                 code: "json.name(\"Alex\")\njson.email(\"alex@example.com\")\n# => { \"name\": \"Alex\", \"email\": \"alex@example.com\" }"
-               }, highlight: false } %>
+  <% if notice %>
+    <div class="bg-green-50 border border-green-200 text-green-800 rounded px-4 py-2 text-sm mb-4">
+      <%= notice %>
+    </div>
+  <% end %>
 
-    <%= render partial: "review",
-               locals: { review: {
-                 title: "Builder Templates (.builder)",
-                 category: "template",
-                 section: "3.3",
-                 description: "Used for XML responses. An xml object is auto-available. Methods with blocks produce nested XML tags.",
-                 code: "xml.div do\n  xml.h1(@person.name)\n  xml.p(@person.bio)\nend\n# => <div><h1>David</h1><p>Bio...</p></div>"
-               }, highlight: false } %>
-  </section>
-
-  <%# ─── 2. Collection render (Section 4.7) ─── %>
-  <section class="review-group">
-    <h2 class="group-title">Partials — All Rendering Styles</h2>
-
-    <%
-      partial_reviews = [
-        {
-          title: "Basic render — shorthand",
-          category: "partial",
-          section: "4.1",
-          description: "Rails finds _review.html.erb automatically from the name. Underscore prefix is convention for partial files.",
-          code: "<%= render \"review\" %>"
-        },
-        {
-          title: "render with locals: option",
-          category: "partial",
-          section: "4.3",
-          description: "Pass data into a partial using the locals: hash. Each key becomes a partial-local variable.",
-          code: "<%= render partial: \"review\", locals: { review: @review } %>"
-        },
-        {
-          title: "Shorthand render (no partial: key)",
-          category: "partial",
-          section: "4.5",
-          description: "Skip the partial: and locals: keys when those are the only options needed.",
-          code: "<%= render \"review\", review: @review %>"
-        },
-        {
-          title: "Convention shorthand via object",
-          category: "partial",
-          section: "4.5",
-          description: "Pass an ActiveRecord object directly. Rails infers the partial name from the model.",
-          code: "<%= render @review %>"
-        },
-        {
-          title: "object: and as: options",
-          category: "partial",
-          section: "4.6",
-          description: "Use object: to pass a differently-named variable, and as: to rename the local inside the partial.",
-          code: "<%= render partial: \"review\", object: @item, as: \"review\" %>"
-        }
-      ]
-    %>
-
-    <%# Render collection — counter auto-available as review_counter (Section 4.7 + 4.9) %>
-    <%= render partial: "review",
-               collection: partial_reviews,
-               as: :review %>
-  </section>
-
-  <%# ─── 3. Spacer template (Section 4.8) ─── %>
-  <section class="review-group">
-    <h2 class="group-title">Collection with Spacer Template</h2>
-    <%
-      spacer_reviews = [
-        {
-          title: "Spacer Templates",
-          category: "layout",
-          section: "4.8",
-          description: "Use spacer_template: to render a separator partial between each item in a collection. No data is passed to the spacer.",
-          code: "<%= render partial: @reviews,\n           spacer_template: \"review_ruler\" %>"
-        },
-        {
-          title: "Counter Variables",
-          category: "partial",
-          section: "4.9",
-          description: "Rails auto-provides a counter variable named <partial>_counter inside collection partials. Starts at 0.",
-          code: "<%# inside _review.html.erb %>\n<%= review_counter %>\n# 0 for first, 1 for second..."
-        }
-      ]
-    %>
-    <%= render partial: "review",
-               collection: spacer_reviews,
+  <ul class="review-list">
+    <%= render(partial: "reviews/review",
+               collection: @reviews,
                as: :review,
-               spacer_template: "review_ruler" %>
-  </section>
-
-  <%# ─── 4. local_assigns + Pattern Matching (Section 4.4 + 4.10) ─── %>
-  <section class="review-group">
-    <h2 class="group-title">local_assigns, Pattern Matching & Strict Locals</h2>
-
-    <%= render partial: "review",
-               locals: { review: {
-                 title: "local_assigns — safe optional locals",
-                 category: "advanced",
-                 section: "4.4",
-                 description: "Use local_assigns[:key] instead of the variable directly to safely handle optional locals. Returns nil if not passed.",
-                 code: "<%# inside partial %>\n<% if local_assigns[:highlight] %>\n  <mark>Featured!</mark>\n<% end %>"
-               }, highlight: true } %>
-
-    <%= render partial: "review",
-               locals: { review: {
-                 title: "Pattern Matching with local_assigns",
-                 category: "advanced",
-                 section: "4.10",
-                 description: "Ruby 3.1+ pattern matching works on local_assigns. Use => to destructure, rename variables, and splat remaining keys into helpers.",
-                 code: "<%# Destructure + rename %>\n<% local_assigns => { review: record, **options } %>\n<%= tag.div id: dom_id(record), **options do %>\n  <%= record[:title] %>\n<% end %>"
-               }, highlight: false } %>
-
-    <%= render partial: "review",
-               locals: { review: {
-                 title: "Strict Locals",
-                 category: "advanced",
-                 section: "4.11",
-                 description: "Declare a locals: signature at the top of a partial to enforce required variables, set defaults, and compile only one version. Reduces memory waste.",
-                 code: "<%# locals: (review:, highlight: false) -%>\n\n# Required → raises if missing:\n# ActionView::Template::Error: missing local :review\n\n# Optional with default:\n<%# locals: (message: \"Hello!\") -%>"
-               }, highlight: false } %>
-  </section>
-
-  <%# ─── 5. Layouts (Section 5) ─── %>
-  <section class="review-group">
-    <h2 class="group-title">Layouts & Partial Layouts</h2>
-
-    <%= render partial: "review",
-               locals: { review: {
-                 title: "Application Layouts",
-                 category: "layout",
-                 section: "5",
-                 description: "Rails looks for app/views/layouts/<controller_name>.html.erb first, then falls back to application.html.erb. Use yield to inject view content.",
-                 code: "<%# app/views/layouts/application.html.erb %>\n<body>\n  <nav>...</nav>\n  <%= yield %>\n  <footer>...</footer>\n</body>"
-               }, highlight: false } %>
-
-    <%= render partial: "review",
-               locals: { review: {
-                 title: "Partial Layouts",
-                 category: "layout",
-                 section: "5.1",
-                 description: "Partials can have their own layout using the layout: option. The partial layout uses yield and still has access to locals. Partial layouts also use the _ prefix.",
-                 code: "<%# show.html.erb %>\n<%= render partial: 'review',\n           layout: 'box',\n           locals: { review: @review } %>\n\n<%# _box.html.erb %>\n<div class=\"box\">\n  <%= yield %>\n</div>"
-               }, highlight: false } %>
-
-    <%= render partial: "review",
-               locals: { review: {
-                 title: "Collection with Partial Layouts",
-                 category: "layout",
-                 section: "5.2",
-                 description: "layout: works with collection rendering too. Both the counter and object variables are available inside the layout.",
-                 code: "<%= render partial: \"review\",\n           collection: @reviews,\n           layout: \"special_layout\" %>"
-               }, highlight: false } %>
-  </section>
-
-  <%# ─── 6. Localized Views (Section 7) ─── %>
-  <section class="review-group">
-    <h2 class="group-title">Helpers & Localized Views</h2>
-
-    <%= render partial: "review",
-               locals: { review: {
-                 title: "Helpers",
-                 category: "helper",
-                 section: "6",
-                 description: "Rails ships helpers for dates, strings, numbers, HTML links, images, forms, sanitization, and localization. Add custom helpers under app/helpers/.",
-                 code: "<%# In views — built-in helpers %>\n<%= number_to_currency(product.price) %>\n<%= image_tag 'logo.png' %>\n<%= link_to 'Home', root_path %>\n<%= sanitize(user_content) %>"
-               }, highlight: false } %>
-
-    <%= render partial: "review",
-               locals: { review: {
-                 title: "Localized Views",
-                 category: "helper",
-                 section: "7",
-                 description: "Set I18n.locale to render locale-specific templates automatically. Rails tries show.de.html.erb first, then falls back to show.html.erb.",
-                 code: "I18n.locale = :de\n# Rails renders:\n# app/views/reviews/show.de.html.erb\n# falls back to:\n# app/views/reviews/show.html.erb"
-               }, highlight: false } %>
-  </section>
-
+               locals: { highlight: false },
+               spacer_template: "reviews/review_separator") ||
+        content_tag(:li, "No reviews yet — be the first!", class: "text-sm text-gray-400 italic py-4") %>
+  </ul>
 </div>

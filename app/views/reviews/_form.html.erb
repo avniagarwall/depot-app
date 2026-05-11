@@ -1,34 +1,39 @@
-<% if review.errors.any? %>
-  <div id="error_explanation">
-    <h2>
-      <%= pluralize(review.errors.count, "error") %>
-      prohibited this review from being saved:
-    </h2>
-    <ul>
-      <% review.errors.each do |error| %>
-        <li><%= error.full_message %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
-
-<%= form_with model: [@product, review] do |f| %>
-
-  <div>
-    <%= f.label :reviewer_name %>
-    <%= f.text_field :reviewer_name %>
-  </div>
+<%#  Shared partial for new + edit %>
+<%= form_with model: [product, review], class: "review-form space-y-4" do |f| %>
+  <% if review.errors.any? %>
+    <div class="review-form-errors">
+      <p class="font-semibold text-red-700 text-sm">
+        <%= pluralize(review.errors.count, "error") %> prevented saving:
+      </p>
+      <ul class="list-disc list-inside text-sm text-red-600 mt-1">
+        <% review.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
   <div>
-    <%= f.label :rating %>
-    <%= f.select :rating, (1..5).to_a %>
+    <%= f.label :reviewer_name, "Your Name", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_field :reviewer_name, placeholder: "e.g. Jane Smith",
+        class: "w-full border border-gray-300 rounded px-3 py-2 text-sm" %>
   </div>
 
   <div>
-    <%= f.label :body %>
-    <%= f.text_area :body %>
+    <%= f.label :rating, "Rating (1–5)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.select :rating,
+        options_for_select([["⭐ 1 – Poor",1],["⭐⭐ 2 – Fair",2],
+          ["⭐⭐⭐ 3 – Good",3],["⭐⭐⭐⭐ 4 – Great",4],["⭐⭐⭐⭐⭐ 5 – Excellent",5]], review.rating),
+        { include_blank: "Select a rating" },
+        class: "w-full border border-gray-300 rounded px-3 py-2 text-sm" %>
   </div>
 
-  <%= f.submit %>
+  <div>
+    <%= f.label :body, "Your Review", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= f.text_area :body, rows: 5, placeholder: "Share your thoughts...",
+        class: "w-full border border-gray-300 rounded px-3 py-2 text-sm" %>
+  </div>
 
+  <%# Rails auto-labels "Create Review" for new, "Update Review" for edit %>
+  <%= f.submit class: "px-5 py-2 bg-amber-500 text-white font-semibold rounded hover:bg-amber-600 transition text-sm cursor-pointer" %>
 <% end %>

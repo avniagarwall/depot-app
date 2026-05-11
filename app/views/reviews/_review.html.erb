@@ -1,20 +1,36 @@
-<%# locals: (review:, highlight: false) -%>
-
-<li class="review-card <%= highlight ? 'review-card--highlighted' : '' %>">
+<%# Partial locals, safe navigation, counter variable %>
+<li class="review-card <%= 'review-card--highlighted' if highlight %>
+                        <%= 'review-card--first' if defined?(review_counter) && review_counter == 0 %>">
   <div class="review-header">
-    <span class="review-tag review-tag--<%= review[:category] %>">
-      <%= review[:category]&.upcase %>
-    </span>
-    <h3 class="review-title"><%= review[:title] %></h3>
+    <% if review.category.present? %>
+      <span class="review-tag review-tag--<%= review.category %>">
+        <%= review.category.upcase %>
+      </span>
+    <% else %>
+      <span class="review-tag review-tag--uncategorized">UNCATEGORIZED</span>
+    <% end %>
+
+    <% if defined?(review_counter) %>
+      <span class="review-counter">#<%= review_counter + 1 %></span>
+    <% end %>
+
+    <h3 class="review-title"><%= review.title %></h3>
   </div>
 
-  <p class="review-body"><%= review[:description] %></p>
+  <div class="review-meta">
+    <span class="review-author">by <%= review.reviewer_name.presence || "Anonymous" %></span>
+    <% if review.rating.present? %>
+      <span class="review-rating">
+        <%= "⭐" * review.rating.to_i %> (<%= review.rating %>/5)
+      </span>
+    <% end %>
+  </div>
 
-  <% if review[:code].present? %>
-    <pre class="review-code"><code><%= review[:code] %></code></pre>
-  <% end %>
+  <p class="review-body"><%= review.body %></p>
 
   <div class="review-footer">
-    <span class="review-section"> Reviews: <%= review[:section] %></span>
+    <span class="review-date text-gray-400 text-xs">
+      <%= review.created_at.strftime("%b %d, %Y") %>
+    </span>
   </div>
 </li>

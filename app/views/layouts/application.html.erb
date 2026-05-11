@@ -64,8 +64,9 @@
         </ul>
       </nav>
 
+      <%# supports both normal pages (yield) and nested layouts (yield :content) %>
       <main class="container mx-auto mt-4 px-5 flex">
-        <%= yield %>
+        <%= content_for?(:content) ? yield(:content) : yield %>
       </main>
     </section>
   </body>

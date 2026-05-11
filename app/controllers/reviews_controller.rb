@@ -1,35 +1,37 @@
 class ReviewsController < ApplicationController
+  layout "reviews"  # ← Nested layout for all review actions
+
   before_action :set_product
   before_action :set_review, only: [:show, :destroy]
 
-  # READ - all reviews for a product
   def index
-    @reviews = @product.reviews.all
+    @reviews = @product.reviews.order(created_at: :desc)
+    # Convention over config — auto-renders views/reviews/index.html.erb
   end
 
-  # READ - single review
   def show
   end
 
-  # CREATE - form
   def new
     @review = Review.new
   end
 
-  # CREATE - save
   def create
     @review = @product.reviews.new(review_params)
     if @review.save
+      # redirect_to → new HTTP request, prevents form resubmission on refresh
       redirect_to product_reviews_path(@product), notice: "Review added!"
     else
+      # render :new → stays in same request, keeps @review with its errors
       render :new, status: :unprocessable_entity
     end
   end
 
-  # DELETE
   def destroy
     @review.destroy
-    redirect_to product_reviews_path(@product), notice: "Review deleted."
+    # redirect_back → returns to wherever user came from
+    redirect_back fallback_location: product_reviews_path(@product),
+                  notice: "Review deleted."
   end
 
   private

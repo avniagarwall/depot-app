@@ -45,16 +45,23 @@
                   hover:bg-amber-200 transition" %>
     </div>
 
+    <ul class="review-list">
+      <%= render(partial: "reviews/review",
+                 collection: @product.reviews.order(created_at: :desc),
+                 as: :review,
+                 locals: { highlight: false },
+                 spacer_template: "reviews/review_separator") ||
+          content_tag(:li,
+            "No reviews yet — be the first!",
+            class: "text-sm text-gray-400 italic py-4") %>
+    </ul>
+
     <% if @product.reviews.any? %>
-      <ul>
-        <%= render partial: "reviews/review",
-                   collection: @product.reviews,
-                   as: :review %>
-      </ul>
-    <% else %>
-      <p class="text-sm text-gray-400 italic">
-        No reviews yet — be the first!
-      </p>
+      <div class="mt-4 text-right">
+        <%= link_to "See all #{pluralize(@product.reviews.count, 'review')} →",
+            product_reviews_path(@product),
+            class: "text-sm text-amber-600 hover:underline" %>
+      </div>
     <% end %>
   </div>
 
