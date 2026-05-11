@@ -1,42 +1,215 @@
-<h1>Contact Us</h1>
+<% content_for :title, "Contact Us — Pragprog" %>
 
-<% if @contact_form.errors.any? %>
-  <div id="error_explanation">
-    <h2>
-      <%= pluralize(@contact_form.errors.count, "error") %>
-      prevented this message from being sent:
-    </h2>
-    <ul>
-      <% @contact_form.errors.each do |error| %>
-        <li><%= error.full_message %></li>
+<% content_for :head do %>
+  <style>
+    .contact-page { display: flex; gap: 3rem; align-items: flex-start; max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+    .contact-info { flex: 0 0 260px; }
+    .contact-info-card { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+    .contact-info-card h3 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #166534; margin-bottom: 0.75rem; }
+    .contact-info-item { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.6rem; font-size: 0.85rem; color: #374151; }
+    .contact-info-item a { color: #15803d; text-decoration: none; }
+    .contact-info-item a:hover { text-decoration: underline; }
+    .contact-form-wrap { flex: 1; background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .contact-form-wrap h1 { font-size: 1.5rem; font-weight: 700; color: #111827; margin-bottom: 0.25rem; }
+    .contact-subtitle { font-size: 0.875rem; color: #6b7280; margin-bottom: 1.5rem; }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 0.35rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; border: 1px solid #d1d5db; border-radius: 8px;
+      padding: 0.6rem 0.85rem; font-size: 0.9rem; color: #111827;
+      transition: border-color 0.15s, box-shadow 0.15s; box-sizing: border-box;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+    }
+    .char-count { font-size: 0.75rem; color: #9ca3af; text-align: right; margin-top: 0.25rem; }
+    .char-count.warn { color: #d97706; }
+    .char-count.danger { color: #dc2626; }
+    .form-submit { width: 100%; background: #15803d; color: white; border: none; border-radius: 8px; padding: 0.75rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: background 0.15s; margin-top: 0.5rem; }
+    .form-submit:hover { background: #166534; }
+    .error-box { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+    .error-box h2 { font-size: 0.85rem; font-weight: 700; color: #b91c1c; margin-bottom: 0.5rem; }
+    .error-box ul { margin: 0; padding-left: 1.25rem; }
+    .error-box li { font-size: 0.82rem; color: #dc2626; margin-bottom: 0.2rem; }
+    .subject-hint { font-size: 0.78rem; color: #6b7280; margin-top: 0.3rem; }
+    .sanitized-notice { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 0.6rem 0.85rem; font-size: 0.78rem; color: #92400e; margin-top: 0.3rem; }
+    .debug-section { margin-top: 2rem; border: 1px dashed #d1d5db; border-radius: 8px; padding: 1rem; background: #f9fafb; }
+    .debug-section summary { font-size: 0.78rem; font-weight: 600; color: #6b7280; cursor: pointer; }
+    @media (max-width: 640px) { .contact-page { flex-direction: column; } .contact-info { flex: none; width: 100%; } }
+  </style>
+<% end %>
+
+<div class="contact-page">
+
+  
+  <aside class="contact-info">
+
+    <div class="contact-info-card">
+      <h3>📬 Reach Us</h3>
+
+      <div class="contact-info-item">
+        <span>✉️</span>
+        <%= mail_to "support@pragprog.com",
+                    "support@pragprog.com",
+                    subject: "Customer Inquiry",
+                    encode: :hex %>
+      </div>
+
+      <div class="contact-info-item">
+        <span>🧾</span>
+        <%= mail_to "billing@pragprog.com",
+                    "Billing questions",
+                    subject: "Billing Help",
+                    body: "Hello, I have a question about..." %>
+      </div>
+
+      <div class="contact-info-item">
+        <span>📖</span>
+        <%= link_to "https://pragprog.com/support" do %>
+          Support Center <span style="font-size:0.7rem; color:#9ca3af;">↗</span>
+        <% end %>
+      </div>
+
+      <div class="contact-info-item">
+        <span>🕐</span>
+        <span>Mon–Fri, 9am–5pm EST</span>
+      </div>
+    </div>
+
+    <div class="contact-info-card">
+      <h3>🗺️ Navigation</h3>
+
+      
+      <div class="contact-info-item">
+        <%= link_to "🏠 Store",
+            store_index_path,
+            style: current_page?(store_index_path) ?
+                   "font-weight:700; color:#15803d;" : "" %>
+      </div>
+      <div class="contact-info-item">
+        <%= link_to "✉️ Contact",
+            new_contact_path,
+            style: current_page?(new_contact_path) ?
+                   "font-weight:700; color:#15803d;" : "" %>
+      </div>
+
+      <% if current_page?(new_contact_path) %>
+        <p style="font-size:0.75rem; color:#15803d; margin-top:0.5rem;">
+          ← You are here
+        </p>
       <% end %>
-    </ul>
+    </div>
+
+    <% response_time_note = capture do %>
+      <p style="font-size:0.78rem; color:#6b7280; margin-top:0.5rem;">
+        We typically respond within
+        <strong style="color:#374151;">1–2 business days</strong>.
+        That's about <%= distance_of_time_in_words(Time.current, 2.days.from_now) %> from now.
+      </p>
+    <% end %>
+    <%= response_time_note %>
+
+  </aside>
+
+  <div class="contact-form-wrap">
+    <h1>Contact Us</h1>
+
+    <p class="contact-subtitle">
+      <%= sanitize(
+        "Have a question? We'd love to hear from you. " \
+        "Fill out the form and we'll get back to you shortly.",
+        tags: %w(strong em a),
+        attributes: %w(href)
+      ) %>
+    </p>
+
+    <% if @contact_form.errors.any? %>
+      <div class="error-box">
+        <h2>
+          <%= pluralize(@contact_form.errors.count, "error") %>
+          prevented your message from being sent:
+        </h2>
+        <ul>
+          <% @contact_form.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= form_with model: @contact_form, url: contacts_path do |f| %>
+
+      <div class="form-group">
+        <%= f.label :name, "Your Name" %>
+        <%= f.text_field :name,
+            placeholder: "e.g. Jane Smith",
+            minlength: 2, maxlength: 50,
+            autocomplete: "name" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :email, "Email Address" %>
+        <%= f.email_field :email,
+            placeholder: "you@example.com",
+            autocomplete: "email" %>
+
+        <p class="subject-hint">
+          We'll reply to this address. Questions?
+          <%= mail_to "support@pragprog.com", "Email us directly" %>.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :subject, "Subject" %>
+        <%= f.select :subject,
+            [
+              ["💳 Billing & Payments",  "billing"],
+              ["🔧 Technical Support",   "technical"],
+              ["💬 General Inquiry",     "general"]
+            ],
+            { prompt: "— Select a subject —" } %>
+
+        <p class="subject-hint">
+          <% safe_style = sanitize_css("color: #6b7280; font-style: italic;") %>
+          <span style="<%= safe_style %>">Choose the topic that best fits your question.</span>
+        </p>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :message, "Your Message" %>
+        <%= f.text_area :message,
+            rows: 5,
+            placeholder: "Tell us how we can help... (10–1000 characters)",
+            maxlength: 1000,
+            id: "contact_message" %>
+
+        <% if @contact_form.message.present? %>
+          <p class="char-count">
+            Preview: "<%= truncate(@contact_form.message, length: 60, omission: "…") %>"
+            &nbsp;·&nbsp;
+            <%= pluralize(@contact_form.message.length, "character") %> used
+          </p>
+        <% else %>
+          <p class="char-count">Up to 1,000 characters</p>
+        <% end %>
+
+        <div class="sanitized-notice">
+          🛡️ For your safety, HTML tags are stripped from messages.
+          <% sample = "<b>Bold</b> and <script>alert('xss')</script> plain text" %>
+          Example: <em><%= strip_tags(sample) %></em>
+        </div>
+      </div>
+
+      <%= f.submit "Send Message →", class: "form-submit" %>
+
+    <% end %>
+
+    <% if Rails.env.development? %>
+      <details class="debug-section">
+        <summary>🐛 Debug — ContactForm object (dev only)</summary>\
+        <%= debug(@contact_form) %>
+      </details>
+    <% end %>
+
   </div>
-<% end %>
-
-<%= form_with model: @contact_form, url: contacts_path do |f| %>
-
-  <div>
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-
-  <div>
-    <%= f.label :email %>
-    <%= f.email_field :email %>
-  </div>
-
-  <div>
-    <%= f.label :subject %>
-    <%= f.select :subject, %w(billing technical general),
-          { prompt: "Select a subject" } %>
-  </div>
-
-  <div>
-    <%= f.label :message %>
-    <%= f.text_area :message, rows: 5 %>
-  </div>
-
-  <%= f.submit "Send Message" %>
-
-<% end %>
+</div>
