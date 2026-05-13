@@ -6,9 +6,9 @@ class Order < ApplicationRecord
     "Credit card"    => 1,
     "Purchase order" => 2
   }
+  belongs_to :user, optional: true
   has_many :line_items, dependent: :destroy
   has_many :support_requests, dependent: :nullify
-  # ...
   validates :name, :address, :email, presence: true
   validates :pay_type, inclusion: pay_types.keys
   def add_line_items_from_cart(cart)

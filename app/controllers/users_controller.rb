@@ -61,6 +61,15 @@ class UsersController < ApplicationController
     redirect_to users_url, notice: exception.message
   end
 
+  def orders
+    @orders = Current.user.orders.includes(line_items: :product)
+  end
+
+  def line_items
+    @line_items = Current.user.line_items
+                    .includes(:product, :order)
+                    .page(params[:page]).per(5)
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

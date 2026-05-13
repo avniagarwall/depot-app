@@ -1,0 +1,32 @@
+<h2 class="text-2xl font-bold mb-4">My Line Items</h2>
+
+<% if @line_items.empty? %>
+  <p class="text-gray-500">You have no line items yet.</p>
+<% else %>
+  <table class="w-full text-sm border">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="text-left p-2">Order #</th>
+        <th class="text-left p-2">Product</th>
+        <th class="text-right p-2">Qty</th>
+        <th class="text-right p-2">Unit Price</th>
+        <th class="text-right p-2">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @line_items.each do |item| %>
+        <tr class="border-t">
+          <td class="p-2">#<%= item.order_id %></td>
+          <td class="p-2"><%= item.product.title %></td>
+          <td class="text-right p-2"><%= item.quantity %></td>
+          <td class="text-right p-2"><%= number_to_currency(item.product.price) %></td>
+          <td class="text-right p-2"><%= number_to_currency(item.total_price) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="mt-4">
+    <%= paginate @line_items %>
+  </div>
+<% end %>

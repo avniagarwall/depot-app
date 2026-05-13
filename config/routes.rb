@@ -4,7 +4,13 @@ Rails.application.routes.draw do
 
   resources :support_requests, only: %i[ index update ]
 
-  resources :users
+  resources :users do
+    collection do
+      get :orders
+      get :line_items
+    end
+  end
+  
   resources :products
   resource :session
   resources :passwords, param: :token
