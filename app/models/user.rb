@@ -1,7 +1,15 @@
 class User < ApplicationRecord
   validates :name, presence: true, uniqueness: true
-  # 3. add email to user - already present
-  validates :email_address, presence: true, uniqueness: true
+
+  # Email uniqueness (already present) + case insensitive
+  validates :email_address, presence: true, uniqueness: { case_sensitive: false }
+
+  # Email format
+  validates :email_address, format: {
+    with: /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/,
+    message: "must be a valid email address"
+  }
+
   has_secure_password
   has_many :sessions, dependent: :destroy
 
@@ -15,7 +23,7 @@ class User < ApplicationRecord
   private
     def ensure_an_admin_remains
       if User.count.zero?
-      raise Error.new "Can't delete last user"
+        raise Error.new "Can't delete last user"
+      end
     end
-  end
 end
