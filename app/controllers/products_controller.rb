@@ -60,6 +60,11 @@ class ProductsController < ApplicationController
     end
   end
 
+  # 5 - adding new parameters in controller
+  def product_params
+    params.expect(product: [ :title, :description, :image, :price, :enabled, :discount_price, :permalink ])
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_product
