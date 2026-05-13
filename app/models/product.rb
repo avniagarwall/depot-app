@@ -1,11 +1,14 @@
 class Product < ApplicationRecord
 
-  # 3. Create an association on product through which we could get all the carts associated with the product
   has_many :carts, through: :line_items
+  has_many :line_items, dependent: :restrict_with_error
   
   has_one_attached :image
   after_commit -> { broadcast_refresh_later_to "products" }
   after_initialize :set_defaults
+
+  # 1. Make a scope for all the enabled products
+  scope :enabled, -> { where(available:true) }
 
   # Existing validations
   validates :title, presence: true
@@ -38,11 +41,6 @@ class Product < ApplicationRecord
   #   greater_than: :discount_price,
   #   message: "must be greater than discount price"
   # }, if: -> { price.present? && discount_price.present? }
-
-  # 1. We have before_destroy :ensure_not_referenced_by_line_item in Product. Now lets try
-  # a better implementation of this using association options. So a product should not be
-  # destroyed if there is any line_item(s) associated with the product.
-  has_many :line_items, dependent: :restrict_with_error
 
   private
 
