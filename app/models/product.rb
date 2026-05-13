@@ -1,6 +1,7 @@
 class Product < ApplicationRecord
   has_one_attached :image
   after_commit -> { broadcast_refresh_later_to "products" }
+  after_initialize :set_defaults
 
   # Existing validations
   validates :title, presence: true
@@ -38,6 +39,14 @@ class Product < ApplicationRecord
   before_destroy :ensure_not_referenced_by_any_line_item
 
   private
+
+    # 1. Product should be always be initialized with default title 'abc' if no title given.
+    # 2. Discount price should be equal to price unless specified explicitly.
+
+    def set_defaults
+      self.title ||= 'abc'
+      self.discount_price ||= price
+    end
 
     def acceptable_image
       return unless image.attached?
