@@ -1,5 +1,13 @@
 en:
 
+  activerecord:
+    errors:
+      models:
+        product:
+          attributes:
+            permalink:
+              invalid_permalink: "must be at least 3 words separated by hyphens, no spaces or special characters (e.g. my-awesome-product)"
+
   number:
     currency:
       format:

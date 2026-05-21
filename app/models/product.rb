@@ -20,7 +20,7 @@ class Product < ApplicationRecord
   validates :permalink, uniqueness: true,
                         format: {
                           with: VALIDATE_PERMALINK_REGEX,
-                          message: "must be at least 3 words separated by hyphens, no spaces or special characters (e.g. my-awesome-product)"
+                          message: :invalid_permalink
                         }
 
   # Image URL format using ActiveModel::EachValidator
@@ -42,7 +42,8 @@ class Product < ApplicationRecord
 
     def acceptable_image
       return unless image.attached?
-      acceptable_types = [ "image/gif", "image/jpeg", "image/png" ]
+
+      ACCEPTABLE_IMAGE_TYPES = [ "image/gif", "image/jpeg", "image/png" ]
       unless acceptable_types.include?(image.content_type)
         errors.add(:image, "must be a GIF, JPG or PNG image")
       end
@@ -50,6 +51,7 @@ class Product < ApplicationRecord
 
     def description_word_count
       return if description.blank?
+
       count = description.split.size
       unless count.between?(5, 10)
         errors.add(:description, "must be between 5 and 10 words (currently #{count})")
@@ -58,6 +60,7 @@ class Product < ApplicationRecord
 
     def price_greater_than_discount_price
       return if price.blank? || discount_price.blank?
+      
       if price <= discount_price
         errors.add(:price, "must be greater than discount price")
       end
