@@ -1,15 +1,72 @@
-<% content_for :title, "Showing product" %>
+<div id="<%= dom_id product %>" class="w-full sm:w-auto my-5 space-y-5">
+  <div>
+    <strong class="block font-medium mb-1">Title:</strong>
+    <%= product.title %>
+  </div>
 
-<div class="md:w-2/3 w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
-  <% end %>
+  <div>
+    <strong class="block font-medium mb-1">Description:</strong>
+    <%= product.description %>
+  </div>
 
-  <h1 class="font-bold text-4xl">Showing product</h1>
+  <div>
+    <strong class="block font-medium mb-1">Price:</strong>
+    <%= product.price %>
+  </div>
 
-  <%= render @product %>
+  <div>
+    <strong class="block font-medium mb-1">Category:</strong>
+    <%= product.category&.name || product.sub_category&.name || "Uncategorized" %>
+  </div>
 
-  <%= link_to "Edit this product", edit_product_path(@product), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to products", products_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= button_to "Destroy this product", @product, method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+  <div>
+    <strong class="block font-medium mb-1">Images:</strong>
+
+    <% if product.images.attached? %>
+      <div class="relative w-96 my-4 text-center">
+
+        <% product.images.each_with_index do |img, i| %>
+          <div id="slide-<%= product.id %>-<%= i %>"
+               style="display:<%= i == 0 ? 'block' : 'none' %>">
+            <%= image_tag url_for(img), class: "w-96 h-72 object-cover rounded-lg" %>
+            <p class="text-gray-400 text-sm mt-1">
+              <%= i + 1 %> / <%= product.images.count %>
+            </p>
+          </div>
+        <% end %>
+
+        <% if product.images.count > 1 %>
+          <button onclick="changeSlide(<%= product.id %>, -1)"
+                  class="absolute left-0 top-1/2 -translate-y-1/2 text-3xl px-2 bg-white rounded shadow">
+            &#8249;
+          </button>
+          <button onclick="changeSlide(<%= product.id %>, 1)"
+                  class="absolute right-0 top-1/2 -translate-y-1/2 text-3xl px-2 bg-white rounded shadow">
+            &#8250;
+          </button>
+        <% end %>
+
+      </div>
+
+      <script>
+        var sliderCurrent_<%= product.id %> = 0;
+        var sliderTotal_<%= product.id %>   = <%= product.images.count %>;
+
+        function changeSlide(productId, dir) {
+          var current = window["sliderCurrent_" + productId];
+          var total   = window["sliderTotal_"   + productId];
+
+          document.getElementById("slide-" + productId + "-" + current).style.display = "none";
+          current = (current + dir + total) % total;
+          document.getElementById("slide-" + productId + "-" + current).style.display = "block";
+
+          window["sliderCurrent_" + productId] = current;
+        }
+      </script>
+
+    <% else %>
+      <p class="text-gray-500">No images attached</p>
+    <% end %>
+  </div>
+
 </div>

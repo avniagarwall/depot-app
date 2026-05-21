@@ -1,0 +1,50 @@
+<h1 class="text-2xl font-bold mb-4">Admin Reports</h1>
+
+<%# Date range filter form %>
+<form method="get" class="flex gap-4 items-end mb-6">
+  <div>
+    <label class="block text-sm font-medium">From</label>
+    <input type="date" name="from" value="<%= @from %>"
+           class="border rounded px-3 py-2 mt-1">
+  </div>
+  <div>
+    <label class="block text-sm font-medium">To</label>
+    <input type="date" name="to" value="<%= @to %>"
+           class="border rounded px-3 py-2 mt-1">
+  </div>
+  <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">
+    Filter
+  </button>
+</form>
+
+<p class="text-gray-500 mb-4">
+  Showing orders from <strong><%= @from %></strong> to <strong><%= @to %></strong>
+  (<%= @orders.count %> orders)
+</p>
+
+<% if @orders.empty? %>
+  <p class="text-gray-500">No orders found for this period.</p>
+<% else %>
+  <table class="w-full text-sm border">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="text-left p-2">Order #</th>
+        <th class="text-left p-2">Placed At</th>
+        <th class="text-left p-2">Items</th>
+        <th class="text-right p-2">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @orders.each do |order| %>
+        <tr class="border-t">
+          <td class="p-2">#<%= order.id %></td>
+          <td class="p-2"><%= order.created_at.strftime("%d %b %Y %H:%M") %></td>
+          <td class="p-2"><%= order.line_items.sum(:quantity) %> items</td>
+          <td class="text-right p-2">
+            <%= number_to_currency(order.line_items.sum { |li| li.quantity * li.product.price }) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

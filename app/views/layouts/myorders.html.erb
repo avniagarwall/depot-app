@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Orders | Depot</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "application", media: "all" %>
+    <%= javascript_include_tag "application" %>
+  </head>
+  <body>
+    <header class="bg-gray-800 text-white px-6 py-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold">My Orders</h1>
+      <nav class="space-x-4">
+        <%= link_to "Orders",     orders_users_path,     class: "hover:underline text-sm" %>
+        <%= link_to "Line Items", line_items_users_path, class: "hover:underline text-sm" %>
+      </nav>
+    </header>
+
+    <main class="p-6">
+      <% if notice.present? %>
+        <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block">
+          <%= notice %>
+        </p>
+      <% end %>
+      <%= yield %>
+    </main>
+  </body>
+</html>

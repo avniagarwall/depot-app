@@ -1,0 +1,13 @@
+<% @categories.each do |category| %>
+  <div class="category">
+    <h3><%= category.name %> (<%= category.products_count %> products)</h3>
+
+    <% if category.sub_categories.any? %>
+      <ul>
+        <% category.sub_categories.each do |sub| %>
+          <li><%= sub.name %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+<% end %>

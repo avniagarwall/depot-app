@@ -15,6 +15,15 @@ en:
       header:       
         one:       "1 error prohibited this %{model} from being saved"
         other:     "%{count} errors prohibited this %{model} from being saved"
+    messages:
+      blank:                    "can't be blank"
+      taken:                    "has already been taken"
+      too_short:                "is too short (minimum is %{count} characters)"
+      too_long:                 "is too long (maximum is %{count} characters)"
+      invalid:                  "is invalid"
+      not_a_number:             "is not a number"
+      greater_than:             "must be greater than %{count}"
+      greater_than_or_equal_to: "must be greater than or equal to %{count}"
 
   layouts:
     application:
@@ -59,5 +68,30 @@ en:
     po:
       po_number: "PO #"
 
-
   thanks:          "Thank you for your order"
+
+  # ── Flash messages ─────────────────────────────────────────────
+  flash:
+    order_placed:      "Your order has been placed successfully!"
+    no_privilege:      "You don't have privilege to access this section"
+    logged_out:        "You have been logged out due to inactivity."
+    user_created:      "User %{name} was successfully created."
+    user_updated:      "User %{name} was successfully updated."
+    user_destroyed:    "User was successfully destroyed."
+    product_created:   "Product was successfully created."
+    product_updated:   "Product was successfully updated."
+    product_destroyed: "Product was successfully destroyed."
+
+  # ── Mailer ─────────────────────────────────────────────────────
+  mailer:
+    order_mailer:
+      subject: "Order Confirmation #%{id}"
+      greeting: "Hello %{name},"
+      intro:    "Thank you for your order! Here are your order details:"
+      item_header: "Your Items"
+      total:    "Total"
+      footer:   "Thank you for shopping with us!"
+    consolidated:
+      subject:  "Your Orders Summary"
+      greeting: "Hello %{name},"
+      intro:    "Here is a summary of all your orders:"
