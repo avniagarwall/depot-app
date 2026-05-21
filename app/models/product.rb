@@ -3,22 +3,23 @@ class Product < ApplicationRecord
   after_commit -> { broadcast_refresh_later_to "products" }
 
   # Existing validations
-  validates :title, presence: true
-  validates :title, uniqueness: true
+  validates :title, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
   validates :image, presence: true
   validate :acceptable_image
 
   # Description: between 5 and 10 words
-  validates :description, presence: true
+  validates :description, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
   validate :description_word_count
 
   # Price: numericality only if price is present
   validates :price, numericality: { greater_than_or_equal_to: 0.01 }, allow_blank: true
 
+  VALIDATE_PERMALINK_REGEX = /\A[a-z0-9]+(-[a-z0-9]+){2,}\z/
+
   # Permalink: unique, no special chars/spaces, min 3 hyphen-separated words
   validates :permalink, uniqueness: true,
                         format: {
-                          with: /\A[a-z0-9]+(-[a-z0-9]+){2,}\z/,
+                          with: VALIDATE_PERMALINK_REGEX,
                           message: "must be at least 3 words separated by hyphens, no spaces or special characters (e.g. my-awesome-product)"
                         }
 
