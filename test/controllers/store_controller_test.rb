@@ -1,7 +1,6 @@
 require "test_helper"
 
 class StoreControllerTest < ActionDispatch::IntegrationTest
-
   def setup
     login_as users(:one)
   end

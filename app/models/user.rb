@@ -1,6 +1,11 @@
 class User < ApplicationRecord
-  validates :name, presence: true, uniqueness: true
-  validates :email_address, presence: true, uniqueness: { case_sensitive: false }
+
+  validates :name, presence: true
+
+  # Email uniqueness (already present) + case insensitive
+  validates :email_address, presence: true, uniqueness: { if: :email_address? }
+
+  # Email format
   validates :email_address, format: {
     with: /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/,
     message: "must be a valid email address"
