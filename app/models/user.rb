@@ -17,7 +17,7 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
-  after_create  :send_welcome_email
+  after_commit  :send_welcome_email, on: :create
   before_update :prevent_admin_update
   before_destroy :prevent_admin_destroy
   after_destroy :ensure_an_admin_remains
