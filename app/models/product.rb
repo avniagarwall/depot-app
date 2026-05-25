@@ -1,5 +1,7 @@
 class Product < ApplicationRecord
   ACCEPTABLE_IMAGE_TYPES = [ "image/gif", "image/jpeg", "image/png" ]
+  VALIDATE_PERMALINK_REGEX = /\A[a-z0-9]+(-[a-z0-9]+){2,}\z/
+
   has_many :carts, through: :line_items
   has_many :line_items, dependent: :restrict_with_error
   belongs_to :category,     optional: true
@@ -31,8 +33,6 @@ class Product < ApplicationRecord
   # Price: numericality only if price is present
   validates :price, numericality: { greater_than_or_equal_to: 0.01 }, allow_blank: true
 
-  VALIDATE_PERMALINK_REGEX = /\A[a-z0-9]+(-[a-z0-9]+){2,}\z/
-
   # Permalink: unique, no special chars/spaces, min 3 hyphen-separated words
   validates :permalink, uniqueness: true,
                         format: {
@@ -58,15 +58,16 @@ class Product < ApplicationRecord
     # 2. Discount price should be equal to price unless specified explicitly.
 
     def set_defaults
-      self.title ||= 'abc'
+      self.title ||= "abc"
       self.discount_price ||= price
     end
 
     def acceptable_image
       return unless images.attached?
+
       images.each do |img|
         unless ACCEPTABLE_IMAGE_TYPES.include?(img.content_type)
-          errors.add(:images, "must be GIF, JPG or PNG only")
+          errors.add(:images, :invalid_image)
         end
       end
     end
@@ -82,15 +83,15 @@ class Product < ApplicationRecord
 
       count = description.split.size
       unless count.between?(5, 10)
-        errors.add(:description, "must be between 5 and 10 words (currently #{count})")
+        errors.add(:description, :invalid_word_count, count: count)
       end
     end
 
     def price_greater_than_discount_price
       return if price.blank? || discount_price.blank?
-      
+
       if price <= discount_price
-        errors.add(:price, "must be greater than discount price")
+        errors.add(:price, :invalid_price)
       end
     end
 

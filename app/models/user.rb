@@ -1,13 +1,12 @@
 class User < ApplicationRecord
+  ADMIN_EMAIL = "admin@depot.com".freeze
+  VALIDATE_EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
+
   validates :name, presence: true
-
-  # Email uniqueness (already present) + case insensitive
-  validates :email_address, presence: true, uniqueness: { if: :email_address? }
-
-  # Email format
+  validates :email_address, presence: true, uniqueness: { case_sensitive: false }
   validates :email_address, format: {
-    with: /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/,
-    message: "must be a valid email address"
+    with: VALIDATE_EMAIL_REGEX,
+    message: :invalid_email
   }
   validates :language, inclusion: { in: %w[english hindi] }
 
@@ -32,12 +31,12 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
-  after_create  :send_welcome_email   # Exercise 3
-  before_update :prevent_admin_update # Exercise 5
-  before_destroy :prevent_admin_destroy   # Exercise 4
-  after_destroy :ensure_an_admin_remains  # existing
+  after_commit  :send_welcome_email, on: :create
+  before_update :prevent_admin_update
+  before_destroy :prevent_admin_destroy
+  after_destroy :ensure_an_admin_remains
 
-  class Error < StandardError; end
+  class AdminDeletionError < StandardError; end
 
   private
 
@@ -46,22 +45,22 @@ class User < ApplicationRecord
     end
 
     def prevent_admin_update
-      if email_address_was == "admin@depot.com"
-        errors.add(:base, "Cannot modify the admin user")
+      if email_address_was == ADMIN_EMAIL
+        errors.add(:base, :cannot_modify_admin)
         throw :abort
       end
     end
 
     def prevent_admin_destroy
-      if email_address == "admin@depot.com"
-        errors.add(:base, "Cannot delete the admin user")
+      if email_address == ADMIN_EMAIL
+        errors.add(:base, :cannot_delete_admin)
         throw :abort
       end
     end
 
     def ensure_an_admin_remains
       if User.count.zero?
-        raise Error.new "Can't delete last user"
+        raise AdminDeletionError, I18n.t("errors.messages.admin_deletion")
       end
     end
 end

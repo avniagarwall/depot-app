@@ -1,4 +1,20 @@
 en:
+  errors:
+  template:
+      body:        "There were problems with the following fields:"
+      header:       
+        one:       "1 error prohibited this %{model} from being saved"
+        other:     "%{count} errors prohibited this %{model} from being saved"
+    messages:
+      admin_deletion: "Can't delete last user"
+      blank:                    "can't be blank"
+      taken:                    "has already been taken"
+      too_short:                "is too short (minimum is %{count} characters)"
+      too_long:                 "is too long (maximum is %{count} characters)"
+      invalid:                  "is invalid"
+      not_a_number:             "is not a number"
+      greater_than:             "must be greater than %{count}"
+      greater_than_or_equal_to: "must be greater than or equal to %{count}"
 
   activerecord:
     errors:
@@ -7,6 +23,21 @@ en:
           attributes:
             permalink:
               invalid_permalink: "must be at least 3 words separated by hyphens, no spaces or special characters (e.g. my-awesome-product)"
+            image:
+              invalid_image: "must be a GIF, JPG or PNG image"
+            description:
+              invalid_word_count: "must be between 5 and 10 words (currently %{count})"
+            price:
+              invalid_price: "must be greater than discount price"
+            base:
+              line_items_present: "Line Items present"
+        user:
+          attributes:
+            email_address:
+              invalid_email: "must be a valid email address"
+            base:
+              cannot_modify_admin: "Cannot modify the admin user"
+              cannot_delete_admin: "Cannot delete the admin user"
 
   number:
     currency:
@@ -17,61 +48,45 @@ en:
         delimiter: ","
         format:    "%u%n"
 
-  errors:
-    template:
-      body:        "There were problems with the following fields:"
-      header:       
-        one:       "1 error prohibited this %{model} from being saved"
-        other:     "%{count} errors prohibited this %{model} from being saved"
-    messages:
-      blank:                    "can't be blank"
-      taken:                    "has already been taken"
-      too_short:                "is too short (minimum is %{count} characters)"
-      too_long:                 "is too long (maximum is %{count} characters)"
-      invalid:                  "is invalid"
-      not_a_number:             "is not a number"
-      greater_than:             "must be greater than %{count}"
-      greater_than_or_equal_to: "must be greater than or equal to %{count}"
-
   layouts:
     application:
-      title:       "The Pragmatic Bookshelf"
-      home:        "Home"
-      questions:   "Questions"
-      news:        "News"
-      contact:     "Contact"
+      title:     "The Pragmatic Bookshelf"
+      home:      "Home"
+      questions: "Questions"
+      news:      "News"
+      contact:   "Contact"
 
   carts:
     cart:
-      title:       "Your Cart"
-      empty:       "Empty cart"
-      checkout:    "Checkout"
+      title:    "Your Cart"
+      empty:    "Empty cart"
+      checkout: "Checkout"
 
   store:
     index:
-      title_html:  "Your Pragmatic Catalog"
+      title_html: "Your Pragmatic Catalog"
     product:
-      add_html:    "Add to Cart"
+      add_html: "Add to Cart"
 
   orders:
     new:
-      legend:       "Please Enter Your Details"
+      legend: "Please Enter Your Details"
     form:
-      name:         "Name"
-      address_html: "Address"
-      email:        "E-mail"
-      pay_type:     "Pay with"
+      name:            "Name"
+      address_html:    "Address"
+      email:           "E-mail"
+      pay_type:        "Pay with"
       pay_prompt_html: "Select a payment method"
-      submit:       "Place Order"
+      submit:          "Place Order"
       pay_types:
-        "Check":           "Check"
-        "Credit card":     "Credit Card"
-        "Purchase order":  "Purchase Order"
+        "Check":          "Check"
+        "Credit card":    "Credit Card"
+        "Purchase order": "Purchase Order"
     check:
       routing_number: "Routing #"
       account_number: "Account #"
     cc:
-      cc_number: "CC #"
+      cc_number:       "CC #"
       expiration_date: "Expiry"
     po:
       po_number: "PO #"
