@@ -1,4 +1,7 @@
 class Product < ApplicationRecord
+  ACCEPTABLE_IMAGE_TYPES = [ "image/gif", "image/jpeg", "image/png" ]
+  VALIDATE_PERMALINK_REGEX = /\A[a-z0-9]+(-[a-z0-9]+){2,}\z/
+
   has_one_attached :image
   after_commit -> { broadcast_refresh_later_to "products" }
 
@@ -13,8 +16,6 @@ class Product < ApplicationRecord
 
   # Price: numericality only if price is present
   validates :price, numericality: { greater_than_or_equal_to: 0.01 }, allow_blank: true
-
-  VALIDATE_PERMALINK_REGEX = /\A[a-z0-9]+(-[a-z0-9]+){2,}\z/
 
   # Permalink: unique, no special chars/spaces, min 3 hyphen-separated words
   validates :permalink, uniqueness: true,
@@ -42,10 +43,8 @@ class Product < ApplicationRecord
 
     def acceptable_image
       return unless image.attached?
-
-      ACCEPTABLE_IMAGE_TYPES = [ "image/gif", "image/jpeg", "image/png" ]
-      unless acceptable_types.include?(image.content_type)
-        errors.add(:image, "must be a GIF, JPG or PNG image")
+      unless ACCEPTABLE_IMAGE_TYPES.include?(image.content_type)
+        errors.add(:image, :invalid_image)
       end
     end
 
@@ -54,7 +53,7 @@ class Product < ApplicationRecord
 
       count = description.split.size
       unless count.between?(5, 10)
-        errors.add(:description, "must be between 5 and 10 words (currently #{count})")
+        errors.add(:description, :invalid_word_count, count: count)
       end
     end
 
@@ -62,13 +61,13 @@ class Product < ApplicationRecord
       return if price.blank? || discount_price.blank?
       
       if price <= discount_price
-        errors.add(:price, "must be greater than discount price")
+        errors.add(:price, :invalid_price)
       end
     end
 
     def ensure_not_referenced_by_any_line_item
       unless line_items.empty?
-        errors.add(:base, "Line Items present")
+        errors.add(:base, :line_items_present)
         throw :abort
       end
     end
