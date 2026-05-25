@@ -21,7 +21,7 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
             status: :unprocessable_entity }
           format.json { render json: @product.errors,
             status: :unprocessable_entity }
-      end
+        end
     end
   end
 
@@ -61,7 +61,7 @@ class ProductsControllerTest < ActionDispatch::IntegrationTest
   test "should destroy product" do
     assert_raises ActiveRecord::RecordNotDestroyed do
       delete product_url(products(:two))
-    end 
+    end
 
     assert Product.exists?(products(:two).id)
   end

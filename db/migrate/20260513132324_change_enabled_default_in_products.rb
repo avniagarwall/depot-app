@@ -1,5 +1,4 @@
 class ChangeEnabledDefaultInProducts < ActiveRecord::Migration[8.1]
-
   # 2. Now change default value of enabled field to false
 
   def change

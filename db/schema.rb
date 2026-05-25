@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_21_101315) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_21_131655) do
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "message_checksum", null: false
@@ -123,6 +123,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_21_101315) do
     t.boolean "enabled", default: false
     t.string "permalink"
     t.decimal "price", precision: 8, scale: 2
+    t.text "product_type"
     t.integer "stock_quantity", default: 0
     t.integer "sub_category_id"
     t.string "title"

@@ -1,6 +1,10 @@
 class User < ApplicationRecord
-  validates :name, presence: true, uniqueness: true
-  validates :email_address, presence: true, uniqueness: { case_sensitive: false }
+  validates :name, presence: true
+
+  # Email uniqueness (already present) + case insensitive
+  validates :email_address, presence: true, uniqueness: { if: :email_address? }
+
+  # Email format
   validates :email_address, format: {
     with: /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/,
     message: "must be a valid email address"
@@ -42,14 +46,14 @@ class User < ApplicationRecord
     end
 
     def prevent_admin_update
-      if email_address_was == 'admin@depot.com'
+      if email_address_was == "admin@depot.com"
         errors.add(:base, "Cannot modify the admin user")
         throw :abort
       end
     end
 
     def prevent_admin_destroy
-      if email_address == 'admin@depot.com'
+      if email_address == "admin@depot.com"
         errors.add(:base, "Cannot delete the admin user")
         throw :abort
       end

@@ -67,6 +67,4 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "hotwire-spark", "~> 0.1.13", :group => :development
-
-gem "kaminari", "~> 1.2"
+gem "hotwire-spark", "~> 0.1.13", group: :development
