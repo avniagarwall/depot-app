@@ -6,7 +6,8 @@
 # We make no guarantees that this code is fit for any purpose.
 # Visit https://pragprog.com/titles/rails8 for more book information.
 #---
-#encoding: utf-8
+# encoding: utf-8
+
 I18n.default_locale = :en
 
 LANGUAGES = [
