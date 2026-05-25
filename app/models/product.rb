@@ -46,13 +46,13 @@ class Product < ApplicationRecord
     # 2. Discount price should be equal to price unless specified explicitly.
 
     def set_defaults
-      self.title ||= 'abc'
+      self.title ||= "abc"
       self.discount_price ||= price
     end
 
     def acceptable_image
       return unless image.attached?
-      
+
       unless ACCEPTABLE_IMAGE_TYPES.include?(image.content_type)
         errors.add(:image, :invalid_image)
       end
@@ -69,7 +69,7 @@ class Product < ApplicationRecord
 
     def price_greater_than_discount_price
       return if price.blank? || discount_price.blank?
-      
+
       if price <= discount_price
         errors.add(:price, :invalid_price)
       end
