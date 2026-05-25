@@ -70,5 +70,10 @@
         <%= yield %>
       </main>
     </section>
+
+    <footer class="mt-8 py-4 px-6 border-t text-sm text-gray-500 text-center">
+      <p>Your IP address is: <%= request.remote_ip %></p>
+      <p>Total page hits: <%= hit_count %></p>
+    </footer>
   </body>
 </html>

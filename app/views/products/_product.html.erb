@@ -7,9 +7,46 @@
     <strong class="block font-medium mb-1">Description:</strong>
     <%= product.description %>
   </div>
+ 
   <div>
-    <strong class="block font-medium mb-1">Image:</strong>
-    <%= link_to product.image.filename, product.image, class: "text-gray-700 underline hover:no-underline" if product.image.attached? %>
+    <strong class="block font-medium mb-1">Images:</strong>
+    <% if product.images.attached? %>
+      <div class="relative w-96 my-4 text-center">
+        <% product.images.each_with_index do |img, i| %>
+          <div class="slide" id="slide-<%= "#{product.id}-#{i}" %>"
+              style="display:<%= i == 0 ? 'block' : 'none' %>">
+            <%= image_tag url_for(img), class: "w-96 h-72 object-cover rounded-lg" %>
+            <p class="text-gray-400 text-sm mt-1">
+              <%= i + 1 %> / <%= product.images.count %>
+            </p>
+          </div>
+        <% end %>
+
+        <% if product.images.count > 1 %>
+          <button onclick="changeSlide(<%= product.id %>, -1)"
+                  class="absolute left-0 top-1/2 -translate-y-1/2 text-3xl px-2 bg-white rounded shadow">
+            &#8249;
+          </button>
+          <button onclick="changeSlide(<%= product.id %>, 1)"
+                  class="absolute right-0 top-1/2 -translate-y-1/2 text-3xl px-2 bg-white rounded shadow">
+            &#8250;
+          </button>
+        <% end %>
+      </div>
+
+      <script>
+        const sliderState_<%= product.id %> = { current: 0, total: <%= product.images.count %> };
+
+        function changeSlide(<%= product.id %>, dir) {
+          const state = sliderState_<%= product.id %>;
+          document.getElementById("slide-<%= product.id %>-" + state.current).style.display = "none";
+          state.current = (state.current + dir + state.total) % state.total;
+          document.getElementById("slide-<%= product.id %>-" + state.current).style.display = "block";
+        }
+      </script>
+    <% else %>
+      <p class="text-gray-500">No images attached</p>
+    <% end %>
   </div>
   <div>
     <strong class="block font-medium mb-1">Price:</strong>

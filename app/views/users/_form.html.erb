@@ -49,6 +49,40 @@
                             class: "input-field" %>
   </div>
 
+  <%= f.fields_for :address do |addr| %>
+    <fieldset class="border rounded-md p-4 my-5">
+      <legend class="font-medium px-2">Address</legend>
+
+      <div class="my-3">
+        <%= addr.label :country, class: "block font-medium mb-1" %>
+        <%= addr.text_field :country, class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-1 w-full focus:outline-blue-600" %>
+      </div>
+
+      <div class="my-3">
+        <%= addr.label :state, class: "block font-medium mb-1" %>
+        <%= addr.text_field :state, class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-1 w-full focus:outline-blue-600" %>
+      </div>
+
+      <div class="my-3">
+        <%= addr.label :city, class: "block font-medium mb-1" %>
+        <%= addr.text_field :city, class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-1 w-full focus:outline-blue-600" %>
+      </div>
+
+      <div class="my-3">
+        <%= addr.label :pincode, class: "block font-medium mb-1" %>
+        <%= addr.text_field :pincode, class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-1 w-full focus:outline-blue-600" %>
+      </div>
+    </fieldset>
+  <% end %>
+
+  <div class="my-5">
+    <%= f.label :language, class: "block font-medium mb-1" %>
+    <%= f.select :language,
+          [["English", "english"], ["Hindi / हिंदी", "hindi"]],
+          {},
+          class: "block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full" %>
+  </div>
+
   <div class="inline">
     <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600
     hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>

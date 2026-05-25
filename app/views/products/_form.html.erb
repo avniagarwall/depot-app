@@ -20,10 +20,22 @@
     <%= form.label :description %>
     <%= form.textarea :description, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": product.errors[:description].none?, "border-red-400 focus:outline-red-600": product.errors[:description].any?}] %>
   </div>
-
+ 
   <div class="my-5">
-    <%= form.label :image %>
-    <%= form.file_field :image, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": product.errors[:image].none?, "border-red-400 focus:outline-red-600": product.errors[:image].any?}] %>
+    <%= form.label :images, "Product Images (max 3)" %>
+    <%= form.file_field :images, multiple: true, accept: "image/*",
+          class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full",
+                  {"border-gray-400 focus:outline-blue-600": product.errors[:images].none?,
+                  "border-red-400 focus:outline-red-600": product.errors[:images].any?}] %>
+    <p class="text-sm text-gray-500 mt-1">You can select up to 3 images</p>
+
+    <% if product.images.attached? %>
+      <div class="flex gap-2 mt-2">
+        <% product.images.each do |img| %>
+          <%= image_tag url_for(img), class: "w-20 h-20 object-cover rounded" %>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 
   <div class="my-5">
@@ -50,6 +62,32 @@
   <div class="my-5 flex items-center gap-2">
     <%= form.check_box :enabled, class: "h-4 w-4 rounded border-gray-400 text-blue-600" %>
     <%= form.label :enabled, "Enabled", class: "font-medium text-gray-700" %>
+  </div>
+
+  <div class="my-5">
+    <%= label_tag :categorization_value, "Category", class: "block font-medium text-gray-700" %>
+
+    <% selected_val = if product.sub_category_id.present?
+                        "SubCategory_#{product.sub_category_id}"
+                      elsif product.category_id.present?
+                        "Category_#{product.category_id}"
+                      end %>
+
+    <select name="product[categorization_value]" id="product_categorization_value"
+            class="block shadow-sm rounded-md border border-gray-400 px-3 py-2 mt-2 w-full focus:outline-blue-600">
+      <option value="">Select One</option>
+      <% @category_options.each do |label, value| %>
+        <option value="<%= value %>" <%= "selected" if value == selected_val %>>
+          <%= label %>
+        </option>
+      <% end %>
+    </select>
+
+    <% if product.errors[:base].any? %>
+      <% product.errors[:base].each do |msg| %>
+        <p class="text-red-500 text-sm mt-1"><%= msg %></p>
+      <% end %>
+    <% end %>
   </div>
 
   <div class="inline">

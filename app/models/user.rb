@@ -8,12 +8,26 @@ class User < ApplicationRecord
     with: VALIDATE_EMAIL_REGEX,
     message: :invalid_email
   }
+  validates :language, inclusion: { in: %w[english hindi] }
+
+  def locale
+    language == 'hindi' ? :hi : :en
+  end
+
+  enum :role, { user: 'user', admin: 'admin' }, prefix: true
+
+  def admin?
+    role == 'admin'
+  end
 
   has_secure_password
   has_many :sessions, dependent: :destroy
 
   has_many :orders
   has_many :line_items, through: :orders
+  
+  has_one  :address, dependent: :destroy
+  accepts_nested_attributes_for :address, update_only: true
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
