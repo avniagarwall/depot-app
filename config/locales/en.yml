@@ -7,6 +7,14 @@ en:
           attributes:
             permalink:
               invalid_permalink: "must be at least 3 words separated by hyphens, no spaces or special characters (e.g. my-awesome-product)"
+            image:
+              invalid_image: "must be a GIF, JPG or PNG image"
+            description:
+              invalid_word_count: "must be between 5 and 10 words (currently %{count})"
+            price:
+              invalid_price: "must be greater than discount price"
+            base:
+              line_items_present: "Line Items present"
 
   number:
     currency:
