@@ -1,13 +1,14 @@
 class User < ApplicationRecord
+  VALIDATE_EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
   validates :name, presence: true
 
   # Email uniqueness (already present) + case insensitive
-  validates :email_address, presence: true, uniqueness: { if: :email_address? }
+  validates :email_address, presence: true, uniqueness: { case_sensitive: false }
 
   # Email format
   validates :email_address, format: {
-    with: /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/,
-    message: "must be a valid email address"
+    with: VALIDATE_EMAIL_REGEX,
+    message: :invalid_email
   }
 
   has_secure_password
@@ -17,13 +18,12 @@ class User < ApplicationRecord
 
   after_destroy :ensure_an_admin_remains
 
-  class Error < StandardError
-  end
+  class AdminDeletionError < StandardError; end
 
   private
     def ensure_an_admin_remains
       if User.count.zero?
-        raise Error.new "Can't delete last user"
+        raise AdminDeletionError, Il8n.t("errors.admin_deletion")
       end
     end
 end

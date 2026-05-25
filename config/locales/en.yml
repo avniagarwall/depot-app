@@ -1,4 +1,6 @@
 en:
+  errors:
+    admin_deletion: "Can't delete last user"
 
   activerecord:
     errors:
@@ -15,6 +17,11 @@ en:
               invalid_price: "must be greater than discount price"
             base:
               line_items_present: "Line Items present"
+            
+  user:
+    attributes:
+      email_address:
+        invalid_email: "must be a valid email address"
 
   number:
     currency:
