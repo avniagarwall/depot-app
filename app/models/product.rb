@@ -1,4 +1,6 @@
 class Product < ApplicationRecord
+  ACCEPTABLE_IMAGE_TYPES = [ "image/gif", "image/jpeg", "image/png" ]
+  VALIDATE_PERMALINK_REGEX = /\A[a-z0-9]+(-[a-z0-9]+){2,}\z/
 
   # 3. Create an association on product through which we could get all the carts associated with the product
   has_many :carts, through: :line_items
@@ -18,8 +20,6 @@ class Product < ApplicationRecord
 
   # Price: numericality only if price is present
   validates :price, numericality: { greater_than_or_equal_to: 0.01 }, allow_blank: true
-
-  VALIDATE_PERMALINK_REGEX = /\A[a-z0-9]+(-[a-z0-9]+){2,}\z/
 
   # Permalink: unique, no special chars/spaces, min 3 hyphen-separated words
   validates :permalink, uniqueness: true,
@@ -51,16 +51,15 @@ class Product < ApplicationRecord
     # 2. Discount price should be equal to price unless specified explicitly.
 
     def set_defaults
-      self.title ||= 'abc'
+      self.title ||= "abc"
       self.discount_price ||= price
     end
 
     def acceptable_image
-      ACCEPTABLE_IMAGE_TYPES = [ "image/gif", "image/jpeg", "image/png" ]
       return unless image.attached?
 
-      unless acceptable_types.include?(image.content_type)
-        errors.add(:image, "must be a GIF, JPG or PNG image")
+      unless ACCEPTABLE_IMAGE_TYPES.include?(image.content_type)
+        errors.add(:image, :invalid_image)
       end
     end
 
@@ -69,15 +68,15 @@ class Product < ApplicationRecord
 
       count = description.split.size
       unless count.between?(5, 10)
-        errors.add(:description, "must be between 5 and 10 words (currently #{count})")
+        errors.add(:description, :invalid_word_count, count: count)
       end
     end
 
     def price_greater_than_discount_price
       return if price.blank? || discount_price.blank?
-      
+
       if price <= discount_price
-        errors.add(:price, "must be greater than discount price")
+        errors.add(:price, :invalid_price)
       end
     end
 end
