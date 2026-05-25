@@ -52,6 +52,7 @@ class Product < ApplicationRecord
 
     def acceptable_image
       return unless image.attached?
+      
       unless ACCEPTABLE_IMAGE_TYPES.include?(image.content_type)
         errors.add(:image, :invalid_image)
       end

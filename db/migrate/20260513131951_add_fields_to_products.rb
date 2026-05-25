@@ -10,5 +10,6 @@ class AddFieldsToProducts < ActiveRecord::Migration[8.1]
       t.boolean :enabled
       t.decimal :discount_price, precision: 8, scale: 2
       t.string  :permalink
+    end
   end
 end
