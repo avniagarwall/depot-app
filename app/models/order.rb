@@ -9,8 +9,20 @@ class Order < ApplicationRecord
   belongs_to :user, optional: true
   has_many :line_items, dependent: :destroy
   has_many :support_requests, dependent: :nullify
+
+  # 2. Add another scope in order which accept two dates and return orders placed between
+  # those dates
+  # ○ Order.by_date(from, to)
+  # ○ Order.by_date : without arguments, should return order for the current day
+  # ○ user.orders.by_date should work and it should return orders placed by user
+  # between given dates. Check the query difference in this one and the above one
+  scope :by_date, ->(from = Date.today.beginning_of_day, to = Date.today.end_of_day) {
+    where(created_at: from..to)
+  }
+
   validates :name, :address, :email, presence: true
   validates :pay_type, inclusion: pay_types.keys
+
   def add_line_items_from_cart(cart)
     cart.line_items.each do |item|
       item.cart_id = nil

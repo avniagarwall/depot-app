@@ -2,13 +2,22 @@ class Product < ApplicationRecord
   ACCEPTABLE_IMAGE_TYPES = [ "image/gif", "image/jpeg", "image/png" ]
   VALIDATE_PERMALINK_REGEX = /\A[a-z0-9]+(-[a-z0-9]+){2,}\z/
 
-  # 3. Create an association on product through which we could get all the carts associated with the product
   has_many :carts, through: :line_items
+  has_many :line_items, dependent: :restrict_with_error
   
   has_one_attached :image
   after_commit -> { broadcast_refresh_later_to "products" }
   after_initialize :set_defaults
 
+  # 1. Make a scope for all the enabled products
+  scope :enabled, -> { where(available:true) }
+
+  # 3. Build queries for following
+  #  - Get All products which are present in atleast one line_item
+  #  - Get array of product titles which are present in atleast one line item
+  scope :in_any_line_item,        -> { joins(:line_items).distinct }
+  scope :titles_in_any_line_item, -> { in_any_line_item.pluck(:title) }
+  
   # Existing validations
   validates :title, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
   validates :image, presence: true
@@ -39,11 +48,6 @@ class Product < ApplicationRecord
   #   greater_than: :discount_price,
   #   message: "must be greater than discount price"
   # }, if: -> { price.present? && discount_price.present? }
-
-  # 1. We have before_destroy :ensure_not_referenced_by_line_item in Product. Now lets try
-  # a better implementation of this using association options. So a product should not be
-  # destroyed if there is any line_item(s) associated with the product.
-  has_many :line_items, dependent: :restrict_with_error
 
   private
 
