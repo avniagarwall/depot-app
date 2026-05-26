@@ -9,7 +9,7 @@ class LineItem < ApplicationRecord
   # Unique combination of product_id and cart_id
   validates :product_id, uniqueness: {
     scope: :cart_id,
-    message: "has already been added to this cart"
+    message: :already_in_cart
   }, if: -> { cart_id.present? }
 
   def total_price

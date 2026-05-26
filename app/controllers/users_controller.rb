@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: %i[ show edit update destroy ]
+  before_action :set_user, only: %i[ show edit update destroy orders line_items ]
 
   # GET /users or /users.json
   def index
@@ -62,11 +62,11 @@ class UsersController < ApplicationController
   end
 
   def orders
-    @orders = Current.user.orders.includes(line_items: :product)
+    @orders = @user.orders.includes(line_items: :product)
   end
 
   def line_items
-    @line_items = Current.user.line_items
+    @line_items = @user.line_items
                     .includes(:product, :order)
                     .page(params[:page]).per(5)
   end
