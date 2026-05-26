@@ -90,7 +90,7 @@ class OrdersController < ApplicationController
     def order_params
       params.expect(order: [ :name, :address, :email, :pay_type ])
     end
-  #...
+  # ...
 
   private
      def ensure_cart_isnt_empty
