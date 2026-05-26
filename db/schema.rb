@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_07_185654) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_21_131655) do
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "message_checksum", null: false
@@ -58,9 +58,37 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_07_185654) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "carts", force: :cascade do |t|
+  create_table "book_orders", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "books", force: :cascade do |t|
+    t.string "author"
+    t.datetime "created_at", null: false
+    t.string "title"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "carts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "line_items_count", default: 0, null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.string "name", null: false
+    t.integer "products_count", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_categories_on_name", unique: true
+  end
+
+  create_table "categories_products", id: false, force: :cascade do |t|
+    t.integer "category_id", null: false
+    t.integer "product_id", null: false
   end
 
   create_table "line_items", force: :cascade do |t|
@@ -82,14 +110,38 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_07_185654) do
     t.string "name"
     t.integer "pay_type"
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "products", force: :cascade do |t|
+    t.integer "category_id"
     t.datetime "created_at", null: false
     t.text "description"
+    t.decimal "discount", precision: 5, scale: 2
+    t.decimal "discount_price", precision: 8, scale: 2
+    t.boolean "enabled", default: false
+    t.string "permalink"
     t.decimal "price", precision: 8, scale: 2
+    t.text "product_type"
+    t.integer "stock_quantity", default: 0
+    t.integer "sub_category_id"
     t.string "title"
     t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_products_on_category_id"
+    t.index ["sub_category_id"], name: "index_products_on_sub_category_id"
+    t.index ["title"], name: "index_products_on_title", unique: true
+    t.check_constraint "(category_id IS NOT NULL AND sub_category_id IS NULL) OR\n           (category_id IS NULL AND sub_category_id IS NOT NULL)", name: "product_belongs_to_one_categorization"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.integer "product_id", null: false
+    t.integer "rating"
+    t.string "reviewer_name"
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_reviews_on_product_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -99,6 +151,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_07_185654) do
     t.string "user_agent"
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "sub_categories", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.integer "category_id", null: false
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id", "name"], name: "index_sub_categories_on_category_id_and_name", unique: true
+    t.index ["category_id"], name: "index_sub_categories_on_category_id"
   end
 
   create_table "support_requests", force: :cascade do |t|
@@ -114,8 +177,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_07_185654) do
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email_address", null: false
+    t.string "language", default: "english", null: false
     t.string "name", null: false
     t.string "password_digest", null: false
+    t.string "role", default: "user", null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
@@ -125,6 +190,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_07_185654) do
   add_foreign_key "line_items", "carts"
   add_foreign_key "line_items", "orders"
   add_foreign_key "line_items", "products"
+  add_foreign_key "orders", "users"
+  add_foreign_key "products", "categories"
+  add_foreign_key "products", "sub_categories"
+  add_foreign_key "reviews", "products"
+  add_foreign_key "reviews", "products"
   add_foreign_key "sessions", "users"
+  add_foreign_key "sub_categories", "categories"
   add_foreign_key "support_requests", "orders"
 end
