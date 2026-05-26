@@ -54,11 +54,13 @@
   
         <ul class="text-gray-300 leading-8">
         <% if authenticated? %>
-          <li><%= link_to 'Orders',   orders_path   %></li>
-          <li><%= link_to 'Products', products_path %></li>
-          <li><%= link_to 'Users',    users_path    %></li>
-          <li><%= button_to 'Logout', session_path, method: :delete %></li>
-        <% else %>
+          <li><%= link_to 'Orders',    orders_path           %></li>
+          <li><%= link_to 'My Orders', orders_users_path     %></li>
+          <li><%= link_to 'My Items',  line_items_users_path %></li>
+          <li><%= link_to 'Products',  products_path         %></li>
+          <li><%= link_to 'Users',     users_path            %></li>
+          <li><%= button_to 'Logout',  session_path, method: :delete %></li>
+        <% end %>
           <li><%= link_to 'Login', new_session_path %></li>
         <% end %>
         </ul>

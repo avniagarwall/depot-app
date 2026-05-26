@@ -2,6 +2,9 @@ class Product < ApplicationRecord
   ACCEPTABLE_IMAGE_TYPES = [ "image/gif", "image/jpeg", "image/png" ]
   VALIDATE_PERMALINK_REGEX = /\A[a-z0-9]+(-[a-z0-9]+){2,}\z/
 
+  # 3. Create an association on product through which we could get all the carts associated with the product
+  has_many :carts, through: :line_items
+  
   has_one_attached :image
   after_commit -> { broadcast_refresh_later_to "products" }
   after_initialize :set_defaults
@@ -37,8 +40,10 @@ class Product < ApplicationRecord
   #   message: "must be greater than discount price"
   # }, if: -> { price.present? && discount_price.present? }
 
-  has_many :line_items
-  before_destroy :ensure_not_referenced_by_any_line_item
+  # 1. We have before_destroy :ensure_not_referenced_by_line_item in Product. Now lets try
+  # a better implementation of this using association options. So a product should not be
+  # destroyed if there is any line_item(s) associated with the product.
+  has_many :line_items, dependent: :restrict_with_error
 
   private
 
@@ -72,13 +77,6 @@ class Product < ApplicationRecord
 
       if price <= discount_price
         errors.add(:price, :invalid_price)
-      end
-    end
-
-    def ensure_not_referenced_by_any_line_item
-      unless line_items.empty?
-        errors.add(:base, :line_items_present)
-        throw :abort
       end
     end
 end
