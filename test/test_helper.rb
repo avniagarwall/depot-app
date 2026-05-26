@@ -20,6 +20,5 @@ module ActiveSupport
         password: "password"
       }
     end
-
   end
 end
