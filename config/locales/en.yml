@@ -8,28 +8,35 @@ en:
         one:   "1 error prohibited this %{model} from being saved"
         other: "%{count} errors prohibited this %{model} from being saved"
 
+  flash:
+    no_privilege: "You don't have permission to perform this action"
+
   activerecord:
     errors:
       models:
         product:
           attributes:
             permalink:
-              invalid_permalink: "must be at least 3 words separated by hyphens, no spaces or special characters (e.g. my-awesome-product)"
+              invalid_permalink:  "must be at least 3 words separated by hyphens, no spaces or special characters (e.g. my-awesome-product)"
             image:
-              invalid_image: "must be a GIF, JPG or PNG image"
+              invalid_image:      "must be a GIF, JPG or PNG image"
             description:
               invalid_word_count: "must be between 5 and 10 words (currently %{count})"
             price:
-              invalid_price: "must be greater than discount price"
+              invalid_price:      "must be greater than discount price"
             base:
               line_items_present: "Line Items present"
         user:
           attributes:
             email_address:
-              invalid_email: "must be a valid email address"
+              invalid_email:      "must be a valid email address"
             base:
               cannot_modify_admin: "Cannot modify the admin user"
               cannot_delete_admin: "Cannot delete the admin user"
+        line_item:
+          attributes:
+            product_id:
+              already_in_cart: "has already been added to this cart"
 
   number:
     currency:
