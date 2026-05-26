@@ -40,7 +40,7 @@ class ProductsController < ApplicationController
       if @product.update(product_params)
         format.html { redirect_to @product, notice: "Product was successfully updated.", status: :see_other }
         format.json { render :show, status: :ok, location: @product }
-        
+
     @product.broadcast_replace_later_to "store/products",
       partial: "store/product"
       else
@@ -58,6 +58,11 @@ class ProductsController < ApplicationController
       format.html { redirect_to products_path, notice: "Product was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
+  end
+
+  # 5 - adding new parameters in controller
+  def product_params
+    params.expect(product: [ :title, :description, :image, :price, :enabled, :discount_price, :permalink ])
   end
 
   private
