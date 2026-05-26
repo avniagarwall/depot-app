@@ -23,7 +23,7 @@ class User < ApplicationRecord
   private
     def ensure_an_admin_remains
       if User.count.zero?
-        raise AdminDeletionError, Il8n.t("errors.admin_deletion")
+        raise AdminDeletionError, I18n.t("errors.admin_deletion")
       end
     end
 end

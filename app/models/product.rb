@@ -43,6 +43,7 @@ class Product < ApplicationRecord
 
     def acceptable_image
       return unless image.attached?
+
       unless ACCEPTABLE_IMAGE_TYPES.include?(image.content_type)
         errors.add(:image, :invalid_image)
       end
@@ -59,7 +60,7 @@ class Product < ApplicationRecord
 
     def price_greater_than_discount_price
       return if price.blank? || discount_price.blank?
-      
+
       if price <= discount_price
         errors.add(:price, :invalid_price)
       end
