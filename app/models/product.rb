@@ -12,6 +12,12 @@ class Product < ApplicationRecord
   # 1. Make a scope for all the enabled products
   scope :enabled, -> { where(available:true) }
 
+  # 3. Build queries for following
+  #  - Get All products which are present in atleast one line_item
+  #  - Get array of product titles which are present in atleast one line item
+  scope :in_any_line_item,        -> { joins(:line_items).distinct }
+  scope :titles_in_any_line_item, -> { in_any_line_item.pluck(:title) }
+  
   # Existing validations
   validates :title, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
   validates :image, presence: true
