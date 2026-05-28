@@ -73,3 +73,7 @@ product.image.attach(io: File.open(
     filename: 'nrclient2.jpg')
 
 product.save!
+
+books = Category.create!(name: "Books")
+Category.create!(name: "Fiction",    parent: books)
+Category.create!(name: "Non-Fiction", parent: books)

@@ -22,20 +22,9 @@
   </div>
 
   <div class="my-5">
-    <%= form.label :image %>
-    <%= form.file_field :image, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": product.errors[:image].none?, "border-red-400 focus:outline-red-600": product.errors[:image].any?}] %>
-  </div>
-
-  <div class="my-5">
     <%= form.label :price %>
     <%= form.text_field :price, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": product.errors[:price].none?, "border-red-400 focus:outline-red-600": product.errors[:price].any?}] %>
   </div>
-
-  # 5. Make form fields in the product creation form for:
-  # a. enabled(checkbox),
-  # b. discount_price(Input Field),
-  # c. permalink(Input Field)
-
 
   <div class="my-5">
     <%= form.label :discount_price %>
@@ -47,9 +36,33 @@
     <%= form.text_field :permalink, placeholder: "e.g. my-awesome-product", class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": product.errors[:permalink].none?, "border-red-400 focus:outline-red-600": product.errors[:permalink].any?}] %>
   </div>
 
+  <div class="my-5">
+    <%= form.label :category_id, "Category" %>
+    <%= form.collection_select :category_id,
+      @categories,
+      :id, :name,
+      { prompt: I18n.t("helpers.select.prompt") },
+      { class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full",
+        {"border-gray-400 focus:outline-blue-600": product.errors[:category_id].none?,
+        "border-red-400 focus:outline-red-600":   product.errors[:category_id].any?}] } %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :images %>
+    <%= form.file_field :images, multiple: true, accept: "image/gif,image/jpeg,image/png",
+        class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": product.errors[:images].none?, "border-red-400 focus:outline-red-600": product.errors[:images].any?}] %>
+    <% if product.images.attached? %>
+      <div class="flex gap-2 mt-2">
+        <% product.images.each do |img| %>
+          <%= image_tag img, class: "h-16 w-16 object-cover rounded" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
   <div class="my-5 flex items-center gap-2">
-    <%= form.check_box :enabled, class: "h-4 w-4 rounded border-gray-400 text-blue-600" %>
-    <%= form.label :enabled, "Enabled", class: "font-medium text-gray-700" %>
+    <%= form.check_box :available, class: "h-4 w-4 rounded border-gray-400 text-blue-600" %>
+    <%= form.label :available, "Enabled", class: "font-medium text-gray-700" %>
   </div>
 
   <div class="inline">

@@ -10,6 +10,22 @@ en:
 
   flash:
     no_privilege: "You don't have permission to perform this action"
+    product:
+      created:   "Product was successfully created."
+      updated:   "Product was successfully updated."
+      destroyed: "Product was successfully destroyed."
+    user:
+      created:   "User %{name} was successfully created."
+      updated:   "User %{name} was successfully updated."
+      destroyed: "User was successfully destroyed."
+    session:
+      created:     "Welcome back!"
+      destroyed:   "You have been logged out."
+      expired:     "You have been logged out due to inactivity."
+      invalid:     "Try another email address or password."
+      rate_limited: "Too many attempts. Try again later."
+    locale:
+      unavailable: "%{locale} translation not available"
 
   activerecord:
     errors:
@@ -91,3 +107,21 @@ en:
       po_number: "PO #"
 
   thanks: "Thank you for your order"
+
+  category:
+    attributes:
+      base:
+        products_present: "Cannot delete category with associated products"
+        sub_category_products_present: "Cannot delete category with products in its sub-categories"
+        no_deep_nesting: "A sub-category cannot have its own sub-categories"
+      name:
+        taken: "has already been taken for this category"
+
+  helpers:
+    select:
+      prompt: "Select One"
+    confirm:
+      destroy: "Are you sure you want to delete this product?"
+
+  images:
+    too_many_images: "cannot upload more than 3 images"
