@@ -27,7 +27,6 @@ class User < ApplicationRecord
   before_destroy :prevent_admin_destroy
   after_destroy :ensure_an_admin_remains
 
-  
   def admin?
     role == "admin"
   end
