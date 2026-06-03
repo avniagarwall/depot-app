@@ -51,18 +51,18 @@
     <%= form.label :images %>
     <%= form.file_field :images, multiple: true, accept: "image/gif,image/jpeg,image/png",
         class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": product.errors[:images].none?, "border-red-400 focus:outline-red-600": product.errors[:images].any?}] %>
-    <% if product.images.attached? %>
+    <% if product.persisted? && product.images.attached? %>
       <div class="flex gap-2 mt-2">
         <% product.images.each do |img| %>
-          <%= image_tag img, class: "h-16 w-16 object-cover rounded" %>
+          <%= image_tag url_for(img), class: "h-16 w-16 object-cover rounded" %>
         <% end %>
       </div>
     <% end %>
   </div>
 
   <div class="my-5 flex items-center gap-2">
-    <%= form.check_box :available, class: "h-4 w-4 rounded border-gray-400 text-blue-600" %>
-    <%= form.label :available, "Enabled", class: "font-medium text-gray-700" %>
+    <%= form.check_box :enabled, class: "h-4 w-4 rounded border-gray-400 text-blue-600" %>
+    <%= form.label :enabled, "Enabled", class: "font-medium text-gray-700" %>
   </div>
 
   <div class="inline">

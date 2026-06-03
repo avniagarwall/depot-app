@@ -47,7 +47,10 @@ class ProductsController < ApplicationController
   # PATCH/PUT /products/1 or /products/1.json
   def update
     respond_to do |format|
-      if @product.update(product_params)
+      product_attrs = product_params
+      product_attrs = product_attrs.except(:images) if product_attrs[:images].blank?
+
+      if @product.update(product_attrs)
         @product.broadcast_replace_later_to "store/products", partial: "store/product"
         format.html { redirect_to @product, notice: I18n.t("flash.product.updated"), status: :see_other }
         format.json { render :show, status: :ok, location: @product }
@@ -80,7 +83,7 @@ class ProductsController < ApplicationController
 
     def product_params
       params.expect(product: [ :title, :description, :price, :discount_price,
-                                :permalink, :available, :category_id,
+                                :permalink, :enabled, :category_id,
                                 images: [] ])
     end
 end

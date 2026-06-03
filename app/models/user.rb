@@ -1,7 +1,7 @@
 class User < ApplicationRecord
-  ADMIN_EMAIL = "admin@depot.com".freeze
-  VALIDATE_EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
-  ROLES = %w[ user admin ].freeze
+  ADMIN_EMAIL = "admin@depot.com".freeze unless defined?(ADMIN_EMAIL)
+  VALIDATE_EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/ unless defined?(VALIDATE_EMAIL_REGEX)
+  ROLES = %w[ user admin ].freeze unless defined?(ROLES)
 
   validates :name, presence: true
   validates :email_address, presence: true, uniqueness: { case_sensitive: false }
@@ -22,10 +22,15 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
-  after_commit_create :send_welcome_email
+  after_create_commit :send_welcome_email  # fixed
   before_update :prevent_admin_update
   before_destroy :prevent_admin_destroy
   after_destroy :ensure_an_admin_remains
+
+  
+  def admin?
+    role == "admin"
+  end
 
   class AdminDeletionError < StandardError; end
 
@@ -55,7 +60,4 @@ class User < ApplicationRecord
       end
     end
 
-    def admin?
-      role == "admin"
-    end
 end

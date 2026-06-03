@@ -3,7 +3,7 @@ class UsersController < ApplicationController
 
   rescue_from User::AdminDeletionError, with: :handle_admin_deletion
 
-  layout "myorders", only: %i[ orders line_items ]
+  #layout "myorders", only: %i[ orders line_items ]
 
   # GET /users or /users.json
   def index
@@ -76,3 +76,10 @@ class UsersController < ApplicationController
   private
 
     def set_user
+      @user = params[:id] ? User.find(params[:id]) : Current.user
+    end
+
+    def user_params
+      params.require(:user).permit(:name, :email, :password, :password_confirmation, :admin)
+    end
+  end

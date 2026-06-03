@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  
+  root "store#index"
+  get "store", to: "store#index", as: :store_index
 
   firefox_only = ->(req) { req.user_agent&.include?("Firefox") }
   not_firefox  = ->(req) { !req.user_agent&.include?("Firefox") }
@@ -16,13 +19,13 @@ Rails.application.routes.draw do
 
     resources :users
 
-    resources :books, controller: "products"
+    resources :products
 
-    get "categories/:id/books", to: "products#index",
+    get "categories/:id/products", to: "products#index",
         constraints: { id: /\d+/ },
-        as: :category_books
+        as: :category_products
 
-    get "categories/:id/books", to: redirect("/")
+    get "categories/:id/products", to: redirect("/")
 
     resources :categories, only: [ :index, :show ]
 
@@ -35,7 +38,6 @@ Rails.application.routes.draw do
       resources :orders
       resources :line_items
       resources :carts
-      root "store#index"
     end
   end
 
