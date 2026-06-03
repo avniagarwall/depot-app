@@ -1,18 +1,45 @@
 <div id="<%= dom_id product %>" class="w-full sm:w-auto my-5 space-y-5">
   <div>
     <strong class="block font-medium mb-1">Title:</strong>
-    <%= product. title %>
+    <%= product.title %>
   </div>
+
   <div>
     <strong class="block font-medium mb-1">Description:</strong>
     <%= product.description %>
   </div>
+
   <div>
-    <strong class="block font-medium mb-1">Image:</strong>
-    <%= link_to product.image.filename, product.image, class: "text-gray-700 underline hover:no-underline" if product.image.attached? %>
+    <strong class="block font-medium mb-1">Category:</strong>
+    <%= product.category&.name %>
   </div>
+
   <div>
     <strong class="block font-medium mb-1">Price:</strong>
-    <%= product.price %>
+    <%= number_to_currency(product.price) %>
+  </div>
+
+  <div>
+    <strong class="block font-medium mb-1">Discount Price:</strong>
+    <%= number_to_currency(product.discount_price) %>
+  </div>
+
+  <div>
+    <strong class="block font-medium mb-1">Permalink:</strong>
+    <%= product.permalink %>
+  </div>
+
+  <div>
+    <strong class="block font-medium mb-1">Available:</strong>
+    <%= product.enabled? ? "Yes" : "No" %>
+  </div>
+
+  <div>
+    <strong class="block font-medium mb-1">Image:</strong>
+    <% if product.images.attached? %>
+      <%= image_tag product.images.first, class: "w-32 h-32 object-cover rounded" %>
+    <% else %>
+      <span class="text-gray-400">No image uploaded</span>
+    <% end %>
   </div>
 </div>

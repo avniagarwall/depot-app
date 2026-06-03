@@ -1,32 +1,38 @@
-<h2 class="text-2xl font-bold mb-4">My Line Items</h2>
+<% content_for :title, "My Line Items" %>
 
-<% if @line_items.empty? %>
-  <p class="text-gray-500">You have no line items yet.</p>
-<% else %>
-  <table class="w-full text-sm border">
-    <thead>
-      <tr class="bg-gray-100">
-        <th class="text-left p-2">Order #</th>
-        <th class="text-left p-2">Product</th>
-        <th class="text-right p-2">Qty</th>
-        <th class="text-right p-2">Unit Price</th>
-        <th class="text-right p-2">Subtotal</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @line_items.each do |item| %>
-        <tr class="border-t">
-          <td class="p-2">#<%= item.order_id %></td>
-          <td class="p-2"><%= item.product.title %></td>
-          <td class="text-right p-2"><%= item.quantity %></td>
-          <td class="text-right p-2"><%= number_to_currency(item.product.price) %></td>
-          <td class="text-right p-2"><%= number_to_currency(item.total_price) %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+<div class="w-full">
+  <h2 class="font-bold text-4xl mb-6">My Line Items</h2>
 
-  <div class="mt-4">
-    <%= paginate @line_items %>
-  </div>
-<% end %>
+  <% if @line_items.empty? %>
+    <p class="text-center my-10 text-gray-500">You have no line items yet.</p>
+  <% else %>
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="text-left px-4 py-3 font-semibold">Order #</th>
+            <th class="text-left px-4 py-3 font-semibold">Product</th>
+            <th class="text-right px-4 py-3 font-semibold">Qty</th>
+            <th class="text-right px-4 py-3 font-semibold">Unit Price</th>
+            <th class="text-right px-4 py-3 font-semibold">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <% @line_items.each do |item| %>
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3">#<%= item.order_id %></td>
+              <td class="px-4 py-3"><%= item.product.title %></td>
+              <td class="text-right px-4 py-3"><%= item.quantity %></td>
+              <td class="text-right px-4 py-3"><%= number_to_currency(item.product.price) %></td>
+              <td class="text-right px-4 py-3 font-medium"><%= number_to_currency(item.total_price) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4">
+      <%= paginate @line_items %>
+    </div>
+  <% end %>
+</div>

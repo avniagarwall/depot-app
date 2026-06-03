@@ -1,6 +1,7 @@
 class User < ApplicationRecord
-  ADMIN_EMAIL = "admin@depot.com".freeze
-  VALIDATE_EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
+  ADMIN_EMAIL = "admin@depot.com".freeze unless defined?(ADMIN_EMAIL)
+  VALIDATE_EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/ unless defined?(VALIDATE_EMAIL_REGEX)
+  ROLES = %w[ user admin ].freeze unless defined?(ROLES)
 
   validates :name, presence: true
   validates :email_address, presence: true, uniqueness: { case_sensitive: false }
@@ -8,19 +9,28 @@ class User < ApplicationRecord
     with: VALIDATE_EMAIL_REGEX,
     message: :invalid_email
   }
+  validates :role, inclusion: { in: ROLES }
 
   has_secure_password
-  has_many :sessions, dependent: :destroy
 
+  has_many :sessions, dependent: :destroy
   has_many :orders
   has_many :line_items, through: :orders
+  has_one  :address
+
+  accepts_nested_attributes_for :address, update_only: true
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
-  after_commit_create :send_welcome_email
+  after_create_commit :send_welcome_email  # fixed
   before_update :prevent_admin_update
   before_destroy :prevent_admin_destroy
   after_destroy :ensure_an_admin_remains
+
+  
+  def admin?
+    role == "admin"
+  end
 
   class AdminDeletionError < StandardError; end
 
@@ -49,4 +59,5 @@ class User < ApplicationRecord
         raise AdminDeletionError, I18n.t("errors.messages.admin_deletion")
       end
     end
+
 end

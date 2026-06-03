@@ -26,7 +26,7 @@
   <body>
     <header class="bg-green-700">
       <aside data-controller="locale">
-        <%= form_with url: store_index_path, class: 'locale' do %>
+        <%= form_with url: root_path, class: 'locale' do %>
           <%= select_tag 'set_locale',
             options_for_select(LANGUAGES, I18n.locale.to_s),
             class: 'text-white',
@@ -54,13 +54,15 @@
   
         <ul class="text-gray-300 leading-8">
         <% if authenticated? %>
-          <li><%= link_to 'Orders',    orders_path           %></li>
-          <li><%= link_to 'My Orders', orders_users_path     %></li>
-          <li><%= link_to 'My Items',  line_items_users_path %></li>
-          <li><%= link_to 'Products',  products_path         %></li>
-          <li><%= link_to 'Users',     users_path            %></li>
+           <% if Current.user.admin? %>
+            <li><%= link_to 'Orders',   orders_path   %></li>
+            <li><%= link_to 'Products', products_path %></li>
+            <li><%= link_to 'Users',    users_path    %></li>
+          <% end %>
+          <li><%= link_to 'My Orders', my_orders_path %></li>
+          <li><%= link_to 'My Items',  my_items_path  %></li>
           <li><%= button_to 'Logout',  session_path, method: :delete %></li>
-        <% end %>
+        <% else %>
           <li><%= link_to 'Login', new_session_path %></li>
         <% end %>
         </ul>
@@ -70,5 +72,9 @@
         <%= yield %>
       </main>
     </section>
+    <footer class="mt-8 py-4 px-6 bg-gray-100 text-sm text-gray-600 text-center">
+      <p>Page views: <%= hit_count %></p>
+      <p>Your IP address is: <%= request.remote_ip %></p>
+    </footer>
   </body>
 </html>

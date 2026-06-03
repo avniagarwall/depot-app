@@ -1,0 +1,40 @@
+<h1 class="text-2xl font-bold mb-6">Orders Report</h1>
+
+<%# Date range filter %>
+<%= form_with url: admin_reports_path, method: :get, class: "flex gap-4 mb-8 items-end" do |f| %>
+  <div>
+    <%= f.label :from, "From" %>
+    <%= f.date_field :from, value: @from, class: "block border rounded px-3 py-2 mt-1" %>
+  </div>
+  <div>
+    <%= f.label :to, "To" %>
+    <%= f.date_field :to, value: @to, class: "block border rounded px-3 py-2 mt-1" %>
+  </div>
+  <%= f.submit "Filter", class: "px-4 py-2 bg-blue-600 text-white rounded cursor-pointer" %>
+<% end %>
+
+<p class="mb-4 text-gray-600">
+  Showing orders from <strong><%= @from %></strong> to <strong><%= @to %></strong>
+  (<%= @orders.count %> orders)
+</p>
+
+<table class="w-full border-collapse">
+  <thead>
+    <tr class="bg-gray-100">
+      <th class="px-4 py-2 text-left">Order #</th>
+      <th class="px-4 py-2 text-left">Customer</th>
+      <th class="px-4 py-2 text-left">Total</th>
+      <th class="px-4 py-2 text-left">Placed At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @orders.each do |order| %>
+      <tr class="<%= cycle('bg-white', 'bg-gray-50') %> border-t">
+        <td class="px-4 py-2"><%= order.id %></td>
+        <td class="px-4 py-2"><%= order.name %></td>
+        <td class="px-4 py-2"><%= number_to_currency(order.line_items.sum(&:total_price)) %></td>
+        <td class="px-4 py-2"><%= order.created_at.strftime("%b %d, %Y %H:%M") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

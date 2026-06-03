@@ -1,6 +1,10 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show edit update destroy orders line_items ]
 
+  rescue_from User::AdminDeletionError, with: :handle_admin_deletion
+
+  #layout "myorders", only: %i[ orders line_items ]
+
   # GET /users or /users.json
   def index
     @users = User.order(:name)
@@ -13,10 +17,12 @@ class UsersController < ApplicationController
   # GET /users/new
   def new
     @user = User.new
+    @user.build_address
   end
 
   # GET /users/1/edit
   def edit
+    @user.address || @user.build_address
   end
 
   # POST /users or /users.json
@@ -25,7 +31,7 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
-        format.html { redirect_to users_url, notice: "User #{@user.name} was successfully created." }
+        format.html { redirect_to users_url, notice: I18n.t("flash.user.created", name: @user.name) }
         format.json { render :show, status: :created, location: @user }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -38,7 +44,7 @@ class UsersController < ApplicationController
   def update
     respond_to do |format|
       if @user.update(user_params)
-        format.html { redirect_to users_url, notice: "User #{@user.name} was successfully updated." }
+        format.html { redirect_to users_url, notice: I18n.t("flash.user.updated", name: @user.name) }
         format.json { render :show, status: :ok, location: @user }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -52,13 +58,9 @@ class UsersController < ApplicationController
     @user.destroy!
 
     respond_to do |format|
-      format.html { redirect_to users_path, notice: "User was successfully destroyed.", status: :see_other }
+      format.html { redirect_to users_path, notice: I18n.t("flash.user.destroyed"), status: :see_other }
       format.json { head :no_content }
     end
-  end
-
-  rescue_from "User::Error" do |exception|
-    redirect_to users_url, notice: exception.message
   end
 
   def orders
@@ -72,13 +74,12 @@ class UsersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
     def set_user
-      @user = User.find(params.expect(:id))
+      @user = params[:id] ? User.find(params[:id]) : Current.user
     end
 
-    # Only allow a list of trusted parameters through.
     def user_params
-      params.expect(user: [ :name, :email_address, :password, :password_confirmation ])
+      params.require(:user).permit(:name, :email, :password, :password_confirmation, :admin)
     end
-end
+  end

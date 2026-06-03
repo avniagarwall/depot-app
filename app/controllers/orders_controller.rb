@@ -1,5 +1,5 @@
 class OrdersController < ApplicationController
-  allow_unauthenticated_access only: %i[ new create ]
+  #allow_unauthenticated_access only: %i[ new ]
   include CurrentCart
   before_action :set_cart, only: %i[ new create ]
   before_action :ensure_cart_isnt_empty, only: %i[ new ]
@@ -26,6 +26,7 @@ class OrdersController < ApplicationController
   # POST /orders or /orders.json
   def create
     @order = Order.new(order_params)
+    @order.user = Current.user
     @order.add_line_items_from_cart(@cart)
 
     respond_to do |format|
@@ -35,12 +36,10 @@ class OrdersController < ApplicationController
         ChargeOrderJob.perform_later(@order, pay_type_params.to_h)
         format.html { redirect_to store_index_url(locale: I18n.locale),
           notice: I18n.t(".thanks") }
-        format.json { render :show, status: :created,
-          location: @order }
+        format.json { render :show, status: :created, location: @order }
       else
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @order.errors,
-          status: :unprocessable_entity }
+        format.json { render json: @order.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -81,21 +80,18 @@ class OrdersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_order
       @order = Order.find(params.expect(:id))
     end
 
-    # Only allow a list of trusted parameters through.
     def order_params
       params.expect(order: [ :name, :address, :email, :pay_type ])
     end
-  # ...
 
-  private
-     def ensure_cart_isnt_empty
-       if @cart.line_items.empty?
-         redirect_to store_index_url, notice: "Your cart is empty"
-       end
-     end
+    def ensure_cart_isnt_empty
+      if @cart.line_items.empty?
+        redirect_to store_index_url, notice: "Your cart is empty"
+      end
+    end
+
 end
