@@ -7,13 +7,15 @@ class Product < ApplicationRecord
   has_many :line_items, dependent: :restrict_with_error
   has_many :carts, through: :line_items
   has_many_attached :images
+  has_many :taggings, dependent: :destroy
+  has_many :tags, through: :taggings
 
   # Callbacks
   after_commit     -> { broadcast_refresh_later_to "products" }
   after_initialize :set_defaults
 
   # Scopes
-  scope :enabled,                -> { where(available: true) }
+  scope :enabled,                -> { where(enabled: true) }
   scope :in_any_line_item,       -> { joins(:line_items).distinct }
   scope :titles_in_any_line_item, -> { in_any_line_item.pluck(:title) }
 
@@ -33,12 +35,20 @@ class Product < ApplicationRecord
                           message: :invalid_permalink
                         }
 
-  validates :images, presence: true
+  validates :images, presence: true, on: :create
 
   validate :acceptable_images
   validate :maximum_three_images
   validate :description_word_count
   validate :price_greater_than_discount_price
+
+  attr_writer :tag_names
+
+  after_save :sync_tags
+
+  def tag_names
+    @tag_names || tags.pluck(:name)
+  end
 
   private
 
@@ -77,5 +87,15 @@ class Product < ApplicationRecord
       if price <= discount_price
         errors.add(:price, :invalid_price)
       end
+    end
+
+    def sync_tags
+      return if @tag_names.nil?
+
+      resolved_tags = Array(@tag_names).reject(&:blank?).map do |name|
+        Tag.find_or_create_by!(name: name.strip.titleize)
+      end
+
+      self.tags = resolved_tags
     end
 end

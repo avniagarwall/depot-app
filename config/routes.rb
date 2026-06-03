@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   
   root "store#index"
   get "store", to: "store#index", as: :store_index
+  get "store/:id", to: "store#show", as: :store_product
 
   firefox_only = ->(req) { req.user_agent&.include?("Firefox") }
   not_firefox  = ->(req) { !req.user_agent&.include?("Firefox") }
@@ -9,9 +10,14 @@ Rails.application.routes.draw do
   constraints(not_firefox) do
     get "up", to: "rails/health#show", as: :rails_health_check
 
+    get "questions", to: "questions#index"
+    get "news",      to: "news#index"
+    get "contact",   to: "contact#index"
+
     namespace :admin do
       resources :reports,    only: [ :index ]
       resources :categories, only: [ :index ]
+      resources :tags,       only: [ :index, :create, :destroy ]
     end
 
     get "my-orders", to: "users#orders",     as: :my_orders

@@ -4,7 +4,7 @@ class ProductsController < ApplicationController
 
   # GET /products or /products.json
   def index
-    @products = Product.includes(:category, :images_attachments).all
+    @products = Product.includes(:tags, :category, :images_attachments).all
 
     respond_to do |format|
       format.html
@@ -84,6 +84,7 @@ class ProductsController < ApplicationController
     def product_params
       params.expect(product: [ :title, :description, :price, :discount_price,
                                 :permalink, :enabled, :category_id,
-                                images: [] ])
+                                images: [],
+                                tag_names: [] ])
     end
 end

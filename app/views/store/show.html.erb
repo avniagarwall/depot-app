@@ -5,7 +5,23 @@
     </p>
   <% end %>
 
-  <%= render @product %>
+  <h1 class="font-bold text-4xl mb-4"><%= @product.title %></h1>
+  <p class="text-sm text-gray-500 mb-2"><%= @product.category&.name %></p>
+  <p class="mb-4"><%= sanitize(@product.description) %></p>
+
+  <div class="mb-4">
+    <% if @product.discount_price.present? && @product.discount_price < @product.price %>
+      <span class="line-through text-gray-400 mr-2"><%= number_to_currency(@product.price) %></span>
+      <span class="font-bold text-lg text-green-600"><%= number_to_currency(@product.discount_price) %></span>
+    <% else %>
+      <span class="font-bold text-lg"><%= number_to_currency(@product.price) %></span>
+    <% end %>
+  </div>
+
+  <%= button_to "Add to Cart",
+      line_items_path(product_id: @product),
+      form_class: "inline mb-6",
+      class: "rounded-lg py-1 px-2 text-white bg-green-600" %>
 
   <%# Image slider %>
   <% if @product.images.attached? %>
@@ -45,13 +61,15 @@
     </script>
   <% end %>
 
-  <div class="flex gap-4 mt-8">
-    <%= link_to "Edit this product", edit_product_path(@product),
-        class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= link_to "Back to products", products_path,
-        class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-    <%= button_to "Destroy this product", @product, method: :delete,
-        class: "rounded-lg py-3 px-5 bg-red-600 text-white font-medium",
-        data: { turbo_confirm: I18n.t("helpers.confirm.destroy") } %>
-  </div>
+  <% if Current.session&.user&.admin? %>
+    <div class="flex gap-4 mt-8">
+      <%= link_to "Edit this product", edit_product_path(@product),
+          class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+      <%= link_to "Back to products", products_path,
+          class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+      <%= button_to "Destroy this product", @product, method: :delete,
+          class: "rounded-lg py-3 px-5 bg-red-600 text-white font-medium",
+          data: { turbo_confirm: I18n.t("helpers.confirm.destroy") } %>
+    </div>
+  <% end %>
 </div>
