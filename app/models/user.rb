@@ -58,5 +58,4 @@ class User < ApplicationRecord
         raise AdminDeletionError, I18n.t("errors.messages.admin_deletion")
       end
     end
-
 end
