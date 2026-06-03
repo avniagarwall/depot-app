@@ -1,5 +1,5 @@
 class OrdersController < ApplicationController
-  #allow_unauthenticated_access only: %i[ new ]
+  # allow_unauthenticated_access only: %i[ new ]
   include CurrentCart
   before_action :set_cart, only: %i[ new create ]
   before_action :ensure_cart_isnt_empty, only: %i[ new ]
@@ -93,5 +93,4 @@ class OrdersController < ApplicationController
         redirect_to store_index_url, notice: "Your cart is empty"
       end
     end
-
 end
