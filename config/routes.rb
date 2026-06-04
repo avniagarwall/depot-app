@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   root "store#index"
   get "store", to: "store#index", as: :store_index
   get "store/:id", to: "store#show", as: :store_product
