@@ -1,75 +1,87 @@
-<div class="mx-auto md:w-2/3 w-full flex flex-col px-8">
+<div class="w-full px-8 py-6">
   <% if notice.present? %>
     <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice">
       <%= notice %>
     </p>
   <% end %>
 
-  <h1 class="font-bold text-4xl mb-4"><%= @product.title %></h1>
-  <p class="text-sm text-gray-500 mb-2"><%= @product.category&.name %></p>
-  <p class="mb-4"><%= sanitize(@product.description) %></p>
+  <div class="flex flex-row items-start">
+    <%# Left: Image Slider %>
+    <div class="w-48 flex-shrink-0">
+      <% if @product.images.attached? %>
+        <div class="relative">
+          <% @product.images.each_with_index do |img, i| %>
+            <div class="slide" style="display: <%= i.zero? ? 'block' : 'none' %>">
+              <%= image_tag img, class: "w-48 h-64 object-contain rounded-xl shadow bg-gray-50" %>
+            </div>
+          <% end %>
 
-  <div class="mb-4">
-    <% if @product.discount_price.present? && @product.discount_price < @product.price %>
-      <span class="line-through text-gray-400 mr-2"><%= number_to_currency(@product.price) %></span>
-      <span class="font-bold text-lg text-green-600"><%= number_to_currency(@product.discount_price) %></span>
-    <% else %>
-      <span class="font-bold text-lg"><%= number_to_currency(@product.price) %></span>
-    <% end %>
-  </div>
+          <% if @product.images.count > 1 %>
+            <div class="flex gap-3 mt-3">
+              <button onclick="changeSlide(-1)" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm">
+                &#8592; Prev
+              </button>
+              <button onclick="changeSlide(1)" class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm">
+                Next &#8594;
+              </button>
+            </div>
+          <% end %>
+        </div>
 
-  <%= button_to "Add to Cart",
-      line_items_path(product_id: @product),
-      form_class: "inline mb-6",
-      class: "rounded-lg py-1 px-2 text-white bg-green-600" %>
+        <script>
+          let current = 0;
+          const slides = document.querySelectorAll(".slide");
 
-  <%# Image slider %>
-  <% if @product.images.attached? %>
-    <div class="mt-6">
-      <strong class="block font-medium mb-3">Images:</strong>
-      <div class="relative">
-        <% @product.images.each_with_index do |img, i| %>
-          <div class="slide" style="display: <%= i.zero? ? 'block' : 'none' %>">
-            <%= image_tag img, class: "w-full max-w-md h-64 object-cover rounded shadow" %>
-          </div>
-        <% end %>
+          function showSlide(index) {
+            slides.forEach(s => s.style.display = "none");
+            slides[index].style.display = "block";
+          }
 
-        <% if @product.images.count > 1 %>
-          <div class="flex gap-4 mt-4">
-            <button onclick="changeSlide(-1)"
-                    class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-              &#8592; Prev
-            </button>
-            <button onclick="changeSlide(1)"
-                    class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-              Next &#8594;
-            </button>
-          </div>
+          function changeSlide(direction) {
+            current = (current + direction + slides.length) % slides.length;
+            showSlide(current);
+          }
+
+          setInterval(() => changeSlide(1), 3000);
+        </script>
+      <% else %>
+        <div class="w-64 h-80 bg-gray-100 rounded-xl flex items-center justify-center">
+          <span class="text-gray-400">No image</span>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Right: Details %>
+    <div class="flex-1" style="margin-left: 2rem;">
+      <p class="text-sm text-gray-500 mb-1"><%= @product.category&.name %></p>
+      <h1 class="font-bold text-3xl mb-4"><%= @product.title %></h1>
+      <p class="mb-6 text-gray-700"><%= sanitize(@product.description) %></p>
+
+      <div class="mb-6">
+        <% if @product.discount_price.present? && @product.discount_price > 0 && @product.discount_price < @product.price %>
+          <span class="line-through text-gray-400 text-lg mr-2"><%= number_to_currency(@product.price) %></span>
+          <span class="font-bold text-2xl text-green-600"><%= number_to_currency(@product.discount_price) %></span>
+        <% else %>
+          <span class="font-bold text-2xl"><%= number_to_currency(@product.price) %></span>
         <% end %>
       </div>
+
+      <%= button_to "Add to Cart",
+          line_items_path(product_id: @product),
+          form_class: "inline mb-6",
+          class: "rounded-lg py-2 px-6 text-white bg-green-600 hover:bg-green-500 font-medium" %>
+
+      <% if Current.session&.user&.admin? %>
+        <div class="flex flex-wrap gap-3 mt-8 pt-6 border-t">
+          <%= link_to "Edit this product", edit_product_path(@product),
+              class: "rounded-lg py-2 px-4 bg-gray-100 hover:bg-gray-200 font-medium" %>
+          <%= link_to "Back to products", products_path,
+              class: "rounded-lg py-2 px-4 bg-gray-100 hover:bg-gray-200 font-medium" %>
+          <%= button_to "Destroy this product", @product, method: :delete,
+              class: "rounded-lg py-2 px-4 bg-red-600 hover:bg-red-500 text-white font-medium",
+              data: { turbo_confirm: I18n.t("helpers.confirm.destroy") } %>
+        </div>
+      <% end %>
     </div>
-
-    <script>
-      let current = 0;
-      const slides = document.querySelectorAll(".slide");
-
-      function changeSlide(direction) {
-        slides[current].style.display = "none";
-        current = (current + direction + slides.length) % slides.length;
-        slides[current].style.display = "block";
-      }
-    </script>
-  <% end %>
-
-  <% if Current.session&.user&.admin? %>
-    <div class="flex gap-4 mt-8">
-      <%= link_to "Edit this product", edit_product_path(@product),
-          class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-      <%= link_to "Back to products", products_path,
-          class: "rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-      <%= button_to "Destroy this product", @product, method: :delete,
-          class: "rounded-lg py-3 px-5 bg-red-600 text-white font-medium",
-          data: { turbo_confirm: I18n.t("helpers.confirm.destroy") } %>
-    </div>
-  <% end %>
+  </div>
 </div>

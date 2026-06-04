@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_03_102348) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_04_080042) do
   create_table "action_mailbox_inbound_emails", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "message_checksum", null: false
@@ -108,6 +108,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_102348) do
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
+  create_table "product_tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "product_id", null: false
+    t.integer "tag_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_product_tags_on_product_id"
+    t.index ["tag_id", "product_id"], name: "index_product_tags_on_tag_id_and_product_id", unique: true
+    t.index ["tag_id"], name: "index_product_tags_on_tag_id"
+  end
+
   create_table "products", force: :cascade do |t|
     t.integer "category_id"
     t.datetime "created_at", null: false
@@ -141,16 +151,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_102348) do
     t.index ["order_id"], name: "index_support_requests_on_order_id"
   end
 
-  create_table "taggings", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "product_id", null: false
-    t.integer "tag_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["product_id"], name: "index_taggings_on_product_id"
-    t.index ["tag_id", "product_id"], name: "index_taggings_on_tag_id_and_product_id", unique: true
-    t.index ["tag_id"], name: "index_taggings_on_tag_id"
-  end
-
   create_table "tags", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name", null: false
@@ -175,9 +175,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_03_102348) do
   add_foreign_key "line_items", "orders"
   add_foreign_key "line_items", "products"
   add_foreign_key "orders", "users"
+  add_foreign_key "product_tags", "products"
+  add_foreign_key "product_tags", "tags"
   add_foreign_key "products", "categories"
   add_foreign_key "sessions", "users"
   add_foreign_key "support_requests", "orders"
-  add_foreign_key "taggings", "products"
-  add_foreign_key "taggings", "tags"
 end

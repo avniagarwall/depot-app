@@ -7,8 +7,8 @@ class Product < ApplicationRecord
   has_many :line_items, dependent: :restrict_with_error
   has_many :carts, through: :line_items
   has_many_attached :images
-  has_many :taggings, dependent: :destroy
-  has_many :tags, through: :taggings
+  has_many :product_tags, dependent: :destroy
+  has_many :tags, through: :product_tags
 
   # Callbacks
   after_commit     -> { broadcast_refresh_later_to "products" }
@@ -44,7 +44,7 @@ class Product < ApplicationRecord
 
   attr_writer :tag_names
 
-  after_save :sync_tags
+  before_save :sync_tags
 
   def tag_names
     @tag_names || tags.pluck(:name)

@@ -2,7 +2,6 @@ class ProductsController < ApplicationController
   before_action :set_product,    only: %i[ show edit update destroy ]
   before_action :set_categories, only: %i[ new edit create update ]
 
-  # GET /products or /products.json
   def index
     @products = Product.includes(:tags, :category, :images_attachments).all
 
@@ -16,22 +15,23 @@ class ProductsController < ApplicationController
     end
   end
 
-  # GET /products/1 or /products/1.json
   def show
+    redirect_to store_product_path(@product)
   end
 
-  # GET /products/new
   def new
     @product = Product.new
   end
 
-  # GET /products/1/edit
   def edit
   end
 
-  # POST /products or /products.json
   def create
-    @product = Product.new(product_params)
+    @product = Product.new(product_params.except(:images))
+
+    if product_params[:images].present?
+      @product.images.attach(product_params[:images])
+    end
 
     respond_to do |format|
       if @product.save
@@ -44,11 +44,13 @@ class ProductsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /products/1 or /products/1.json
   def update
     respond_to do |format|
-      product_attrs = product_params
-      product_attrs = product_attrs.except(:images) if product_attrs[:images].blank?
+      product_attrs = product_params.except(:images)
+
+      if product_params[:images].present?
+        @product.images.attach(product_params[:images])
+      end
 
       if @product.update(product_attrs)
         @product.broadcast_replace_later_to "store/products", partial: "store/product"
@@ -61,7 +63,6 @@ class ProductsController < ApplicationController
     end
   end
 
-  # DELETE /products/1 or /products/1.json
   def destroy
     @product.destroy!
 

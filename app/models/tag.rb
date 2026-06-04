@@ -1,6 +1,6 @@
 class Tag < ApplicationRecord
-  has_many :taggings, dependent: :destroy
-  has_many :products, through: :taggings
+  has_many :product_tags, dependent: :destroy
+  has_many :products, through: :product_tags
 
   validates :name, presence: true, uniqueness: { case_sensitive: false }
 
@@ -11,6 +11,6 @@ class Tag < ApplicationRecord
   private
 
     def normalize_name
-        self.name = name.strip.titleize
+      self.name = name.strip.titleize
     end
 end
