@@ -44,7 +44,7 @@ class Product < ApplicationRecord
 
   attr_writer :tag_names
 
-  before_save :sync_tags
+  after_save :sync_tags
 
   def tag_names
     @tag_names || tags.pluck(:name)
@@ -92,8 +92,12 @@ class Product < ApplicationRecord
     def sync_tags
       return if @tag_names.nil?
 
-      resolved_tags = Array(@tag_names).reject(&:blank?).map do |name|
-        Tag.find_or_create_by!(name: name.strip.titleize)
+      names = Array(@tag_names).reject(&:blank?).map { |n| n.strip.titleize }
+
+      existing = Tag.where(name: names).index_by(&:name)
+
+      resolved_tags = names.map do |name|
+        existing[name]  || Tag.create!(name: name)
       end
 
       self.tags = resolved_tags

@@ -1,7 +1,7 @@
 class User < ApplicationRecord
-  ADMIN_EMAIL = "admin@depot.com".freeze unless defined?(ADMIN_EMAIL)
-  VALIDATE_EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/ unless defined?(VALIDATE_EMAIL_REGEX)
-  ROLES = %w[ user admin ].freeze unless defined?(ROLES)
+  ADMIN_EMAIL = "admin@depot.com".freeze
+  VALIDATE_EMAIL_REGEX = /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/
+  ROLES = %w[ user admin ].freeze
 
   validates :name, presence: true
   validates :email_address, presence: true, uniqueness: { case_sensitive: false }

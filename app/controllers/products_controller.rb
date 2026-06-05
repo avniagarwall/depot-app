@@ -75,7 +75,7 @@ class ProductsController < ApplicationController
   private
 
     def set_product
-      @product = Product.find(params.expect(:id))
+      @product = Product.includes(:tags, :category, :images_attachments).find(params.expect(:id))
     end
 
     def set_categories
