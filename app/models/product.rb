@@ -18,6 +18,7 @@ class Product < ApplicationRecord
   scope :enabled,                -> { where(enabled: true) }
   scope :in_any_line_item,       -> { joins(:line_items).distinct }
   scope :titles_in_any_line_item, -> { in_any_line_item.pluck(:title) }
+  # scope :published, -> {where(published: true)}
 
   # Validations
   validates :title, presence: true,
