@@ -8,3 +8,8 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+/* Tag Input Dropdown */
+.tag-option { padding: 8px 14px; font-size: 0.875rem; cursor: pointer; }
+.tag-option:hover, .tag-option--highlighted { background-color: #eff6ff; }
+.tag-option--new { color: #1d4ed8; font-style: italic; }
+.tag-option--new::before { content: "+ "; font-style: normal; font-weight: 600; }

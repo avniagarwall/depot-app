@@ -1,0 +1,32 @@
+<div class="my-5 relative" data-controller="tag-input">
+  <label class="block font-medium text-gray-700 mb-2">Tags</label>
+
+  <div id="tag-hidden-fields">
+    <% (product.tag_names.presence || [""]).each do |name| %>
+      <input type="hidden" name="product[tag_names][]" value="<%= name %>">
+    <% end %>
+  </div>
+
+  <div id="tag-input-box" class="flex flex-wrap items-center gap-1.5 min-h-[44px] w-full px-3 py-2 bg-white border border-gray-400 rounded-md shadow-sm focus-within:outline focus-within:outline-2 focus-within:outline-blue-600">
+    <div id="tag-pills" class="flex flex-wrap gap-1.5">
+      <% product.tag_names.each do |name| %>
+        <%= render "tag_pill", name: name %>
+      <% end %>
+    </div>
+
+    <input
+      type="text"
+      id="tag-text-input"
+      class="flex-1 min-w-[120px] border-none outline-none bg-transparent text-sm placeholder-gray-400"
+      placeholder="<%= product.tag_names.any? ? 'Add another tag…' : 'Add a tag…' %>"
+      autocomplete="off"
+      spellcheck="false"
+    >
+  </div>
+
+  <ul id="tag-dropdown" class="absolute z-50 w-full bg-white border border-gray-300 border-t-0 rounded-b-md shadow-lg max-h-52 overflow-y-auto list-none p-0 m-0" role="listbox" hidden></ul>
+
+  <p class="mt-1 text-sm text-gray-500">
+    Type to search or press <kbd class="px-1 py-0.5 text-xs border border-gray-300 rounded">Enter</kbd> to add. <kbd class="px-1 py-0.5 text-xs border border-gray-300 rounded">Backspace</kbd> removes the last tag.
+  </p>
+</div>

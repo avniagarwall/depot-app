@@ -1,4 +1,4 @@
-<%= form_with(model: product, class: "contents") do |form| %>
+<%= form_with(model: product, class: "contents", multipart: true) do |form| %>
   <% if product.errors.any? %>
     <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
       <h2><%= pluralize(product.errors.count, "error") %> prohibited this product from being saved:</h2>
@@ -50,9 +50,16 @@
   <div class="my-5">
     <%= form.label :images %>
     <%= form.file_field :images, multiple: true, accept: "image/gif,image/jpeg,image/png",
-        class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": product.errors[:images].none?, "border-red-400 focus:outline-red-600": product.errors[:images].any?}] %>
+        id: "image_upload",
+        class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full",
+                {"border-gray-400 focus:outline-blue-600": product.errors[:images].none?,
+                 "border-red-400 focus:outline-red-600": product.errors[:images].any?}] %>
+
+    <div id="image_previews" class="flex gap-2 mt-2 flex-wrap"></div>
+
     <% if product.persisted? && product.images.attached? %>
-      <div class="flex gap-2 mt-2">
+      <p class="text-sm text-gray-500 mt-3 mb-1">Currently attached:</p>
+      <div class="flex gap-2 flex-wrap">
         <% product.images.each do |img| %>
           <%= image_tag url_for(img), class: "h-16 w-16 object-cover rounded" %>
         <% end %>
@@ -60,10 +67,65 @@
     <% end %>
   </div>
 
+  <script>
+    const input = document.getElementById("image_upload");
+    let allFiles = [];
+
+    input.addEventListener("change", function(e) {
+      Array.from(e.target.files).forEach(file => {
+        if (!allFiles.find(f => f.name === file.name && f.size === file.size)) {
+          allFiles.push(file);
+        }
+      });
+
+      const dt = new DataTransfer();
+      allFiles.forEach(file => dt.items.add(file));
+      input.files = dt.files;
+
+      const previews = document.getElementById("image_previews");
+      previews.innerHTML = "";
+      allFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "flex flex-col items-center relative";
+
+          const img = document.createElement("img");
+          img.src = ev.target.result;
+          img.className = "h-16 w-16 object-cover rounded";
+
+          const label = document.createElement("p");
+          label.textContent = file.name;
+          label.className = "text-xs text-gray-500 truncate w-16 text-center";
+
+          const remove = document.createElement("button");
+          remove.textContent = "×";
+          remove.type = "button";
+          remove.className = "absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 text-xs flex items-center justify-center";
+          remove.onclick = function() {
+            allFiles = allFiles.filter(f => !(f.name === file.name && f.size === file.size));
+            const dt2 = new DataTransfer();
+            allFiles.forEach(f => dt2.items.add(f));
+            input.files = dt2.files;
+            wrapper.remove();
+          };
+
+          wrapper.appendChild(remove);
+          wrapper.appendChild(img);
+          wrapper.appendChild(label);
+          previews.appendChild(wrapper);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+  </script>
+
   <div class="my-5 flex items-center gap-2">
     <%= form.check_box :enabled, class: "h-4 w-4 rounded border-gray-400 text-blue-600" %>
     <%= form.label :enabled, "Enabled", class: "font-medium text-gray-700" %>
   </div>
+
+  <%= render "tag_input", product: product %>
 
   <div class="inline">
     <%= form.submit class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
